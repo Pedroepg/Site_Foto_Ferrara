@@ -1,0 +1,40 @@
+{% extends 'stock/base.html' %}
+
+{% block content %}
+  <div class="sf-grid">
+    <div class="card">
+      <h3>Total de produtos</h3>
+      <p class="big">{{ total_produtos }}</p>
+    </div>
+    <div class="card warning">
+      <h3>Produtos com baixo estoque</h3>
+      <p class="big">{{ baixo_estoque }}</p>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <h2>Produtos Cadastrados</h2>
+    <a class="btn" href="{% url 'estoque:produto_criar' %}">+ Novo Produto</a>
+  </div>
+    <table class="sf-table">
+      <thead>
+        <tr><th>Nome</th><th>SKU</th><th>Quantidade</th><th>Preço</th><th>Ações</th></tr>
+      </thead>
+      <tbody>
+        {% for p in produtos %}
+        <tr class="{% if p.quantidade < 5 %}low{% endif %}">
+          <td>{{ p.nome }}</td>
+          <td>{{ p.sku }}</td>
+          <td>{{ p.quantidade }}</td>
+          <td>{% if p.preco %}R$ {{ p.preco }}{% else %}-{% endif %}</td>
+          <td>
+            <a class="btn small" href="{% url 'estoque:produto_editar' p.pk %}">Editar</a>
+            <a class="btn danger" href="{% url 'estoque:produto_excluir' p.pk %}">Excluir</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Nenhum produto cadastrado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

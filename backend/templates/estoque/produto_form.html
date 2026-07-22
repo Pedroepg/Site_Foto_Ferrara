@@ -1,0 +1,11 @@
+{% extends 'stock/base.html' %}
+
+{% block content %}
+  <h2>{% if produto %}Editar Produto{% else %}Adicionar Produto{% endif %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ formulario.as_p }}
+    <button class="btn" type="submit">Salvar</button>
+    <a class="btn secondary" href="/estoque/">Cancelar</a>
+  </form>
+{% endblock %}

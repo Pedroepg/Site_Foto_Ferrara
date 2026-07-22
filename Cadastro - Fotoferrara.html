@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastre-se - FotoFerrara</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fdf8f4;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .logo a{
+            text-decoration: none;
+            color: black;
+            font-size: 24px;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+        .btn {
+            background: #a16644;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .container {
+            display: flex;
+            height: 85vh;
+            justify-content: center;
+        }
+        .left {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .left h1 {
+            font-size: 32px;
+            color: #333;
+        }
+        .left p {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+            max-width: 100%;
+        }
+        .form {
+            width: 80%;
+        }
+        .form input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn-cadastro {
+            width:  calc(100% + 27px);
+            padding: 12px;
+            background: #a16644;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .login-link a {
+            color: #a16644;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .right {
+            width: 50%;
+            background: url('imagem-de-fundo-cadastro.jpg') no-repeat center center/cover;
+        }
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: #f4d1b1;
+            text-align: center;
+            padding: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="HomePage - Fotoferrara.html">FotoFerrara</a>
+        </div>
+        <nav>
+            <a href="#">Impressões de fotos</a>
+            <a href="#">Molduras e Decoração</a>
+            <a href="#">Acessórios</a>
+            <a href="#">Contate-nos</a>
+            <a href="#" class="btn">Minha Conta</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="left">
+            <h1>Cadastre-se</h1>
+            <p>Junte-se à comunidade de amantes da fotografia do FotoFerrara hoje mesmo!</p>
+            <form id="cadastroForm" class="form">
+                <input type="text" id="cadastroNome" placeholder="Nome Completo" required>
+                <input type="email" id="cadastroEmail" placeholder="Digite seu e-mail" required>
+                <input type="password" id="cadastroSenha" placeholder="Senha" required>
+                <input type="password" id="cadastroConfirmarSenha" placeholder="Digite novamente a senha" required>
+                <button class="btn-cadastro" type="submit">Cadastrar-se</button>
+            </form>
+            <div class="login-link">
+                <p>Já tem uma conta? <a href="Login - Fotoferrara.html">Entrar</a></p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2024 FotoFerrara - Todos os direitos reservados
+    </footer>
+    <script src="Cadastro-Login_FotoFerrara.js"></script>
+</body>
+</html>

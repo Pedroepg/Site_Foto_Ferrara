@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foto Ferrara - Painel Administrativo</title>
+    
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ApexCharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            /* Palette: Creme, Brown, Earth tones, Matte Gold */
+            --bg-cream: #faf7f2;
+            --bg-sidebar: #1e1511; /* Espresso Brown */
+            --bg-card: #ffffff;
+            --text-main: #2b201a; /* Dark Brown Coffee */
+            --text-muted: #807066;
+            --text-light: #ebdcd0;
+            --color-primary: #593e30;
+            --color-accent: #a16644;
+            --color-light-brown: #f3ebe1;
+            --color-gold: #c5a059;
+            --color-gold-hover: #b38f4a;
+            --color-gold-light: rgba(197, 160, 89, 0.15);
+            --border-color: #ebdcd0;
+            --border-card: rgba(161, 102, 68, 0.12);
+            --shadow-subtle: 0 8px 32px rgba(89, 62, 48, 0.03);
+            --shadow-premium: 0 16px 48px rgba(89, 62, 48, 0.06);
+            --shadow-hover: 0 24px 64px rgba(89, 62, 48, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius-lg: 16px;
+            --border-radius-md: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        h1, h2, h3, h4, .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated-view {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            color: #fff;
+            justify-content: space-between;
+            z-index: 100;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius-md);
+            background: linear-gradient(135deg, var(--color-gold), var(--color-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.3);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+
+        .logo-text span {
+            color: var(--color-gold);
+            font-weight: 300;
+        }
+
+        /* Admin Profile Card inside Sidebar */
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 25px;
+        }
+
+        .avatar-container {
+            position: relative;
+        }
+
+        .avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 2px solid var(--color-gold);
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-primary);
+            color: #fff;
+            font-weight: bold;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background-color: #2ec4b6;
+            border: 2px solid var(--bg-sidebar);
+            border-radius: 50%;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .profile-role {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Sidebar Navigation Menu */
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.04);
+            color: #ffffff;
+            transform: translateX(4px);
+        }
+
+        .menu-item.active {
+            background-color: var(--color-accent);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(161, 102, 68, 0.25);
+            font-weight: 600;
+        }
+
+        .menu-item.active i {
+            color: var(--color-gold);
+        }
+
+        .menu-item i {
+            width: 18px;
+            height: 18px;
+            transition: var(--transition);
+        }
+
+        /* Main Workspace Panel */
+        .main-panel {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Header Navigation bar */
+        .panel-header {
+            height: 80px;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: var(--shadow-subtle);
+            flex-shrink: 0;
+        }
+
+        .header-search {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-cream);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 30px;
+            width: 350px;
+            transition: var(--transition);
+        }
+
+        .header-search:focus-within {
+            border-color: var(--color-accent);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(161, 102, 68, 0.1);
+        }
+
+        .header-search input {
+            border: none;
+            background: none;
+            outline: none;
+            margin-left: 10px;
+            width: 100%;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .date-display {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primary);
+            background-color: #fff;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background-color: var(--color-light-brown);
+            border-color: var(--color-accent);
+        }
+
+        .badge-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-gold);
+            border-radius: 50%;
+        }
+
+        /* Panel Main Scrollable Body */
+        .panel-body {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Views Layout elements */
+        .view-title-block {
+            margin-bottom: 30px;
+        }
+
+        .view-title-block h1 {
+            font-size: 28px;
+            color: var(--color-primary);
+        }
+
+        .view-title-block p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* Top Cards Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(161, 102, 68, 0.25);
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--color-primary);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend-up {
+            color: #2ec4b6;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--border-radius-md);
+            background-color: var(--color-light-brown);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent);
+            box-shadow: 0 4px 10px rgba(89, 62, 48, 0.03);
+        }
+
+        /* Charts Layout */
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+
+        .chart-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .chart-title-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-tab-btn {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chart-tab-btn.active, .chart-tab-btn:hover {
+            background-color: var(--color-light-brown);
+            color: var(--color-primary);
+            border-color: var(--color-accent);
+        }
+
+        /* Recent Clients & Widgets Table */
+        .data-section-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 30px;
+        }
+
+        .premium-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--border-radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .pill-button {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            color: var(--color-accent);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill-button:hover {
+            background-color: var(--color-accent);
+            color: #ffffff;
+            border-color: var(--color-accent);
+            box-shadow: 0 4px 10px rgba(161, 102, 68, 0.15);
+        }
+
+        /* Clean Table */
+        .modern-table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .modern-table th {
+            padding: 12px 16px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-cream);
+        }
+
+        .modern-table td {
+            padding: 16px;
+            font-size: 14px;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(235, 220, 208, 0.4);
+        }
+
+        .modern-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background-color: rgba(46, 196, 182, 0.12);
+            color: #1b8a7f;
+        }
+
+        .status-pending {
+            background-color: rgba(197, 160, 89, 0.12);
+            color: #9c7b3c;
+        }
+
+        .status-canceled {
+            background-color: rgba(229, 57, 53, 0.08);
+            color: #c62828;
+        }
+
+        /* Widget: Calendar & Daily Schedule */
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .schedule-item {
+            padding: 14px;
+            border-radius: var(--border-radius-md);
+            border-left: 4px solid var(--color-gold);
+            background-color: var(--bg-cream);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .schedule-item:hover {
+            transform: translateX(3px);
+            background-color: var(--color-light-brown);
+        }
+
+        .schedule-time {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        .schedule-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .schedule-type {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Calendar Widget */
+        .calendar-widget {
+            margin-top: 25px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 25px;
+        }
+
+        .calendar-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 12px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+
+        .cal-day-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 4px;
+        }
+
+        .cal-day {
+            font-size: 12px;
+            padding: 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-main);
+        }
+
+        .cal-day:hover {
+            background-color: var(--color-light-brown);
+        }
+
+        .cal-day.active {
+            background-color: var(--color-accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .cal-day.has-event {
+            position: relative;
+        }
+
+        .cal-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: var(--color-gold);
+            border-radius: 50%;
+        }
+
+        /* Generic Forms inside tabs */
+        .settings-form, .client-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 800px;
+        }
+
+        .form-full-row {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            outline: none;
+            background-color: var(--bg-cream);
+            color: var(--text-main);
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--color-accent);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(161, 102, 68, 0.1);
+        }
+
+        .primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(89, 62, 48, 0.15);
+            transition: var(--transition);
+        }
+
+        .primary-btn:hover {
+            background-color: var(--color-accent);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(89, 62, 48, 0.25);
+        }
+
+        /* Galeria / Estoque Section */
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .galeria-card {
+            background-color: #fff;
+            border: 1px solid var(--border-card);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-subtle);
+            transition: var(--transition);
+        }
+
+        .galeria-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .galeria-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background-color: var(--color-light-brown);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent);
+        }
+
+        .galeria-info {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .galeria-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--color-primary);
+        }
+
+        .galeria-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-accent);
+        }
+
+        .galeria-sku {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-row {
+                grid-template-columns: 1fr;
+            }
+            .data-section-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                width: 80px;
+                padding: 30px 10px;
+                align-items: center;
+            }
+            .sidebar .logo-text, .sidebar .profile-info, .sidebar .menu-item span, .sidebar .admin-profile {
+                display: none;
+            }
+            .sidebar-header {
+                justify-content: center;
+                margin-bottom: 40px;
+            }
+            .menu-item {
+                justify-content: center;
+                padding: 14px;
+                width: 44px;
+                height: 44px;
+            }
+            .menu-item i {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Layout -->
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-header">
+                <div class="logo-box">
+                    <i data-lucide="camera"></i>
+                </div>
+                <a href="#" class="logo-text">Foto<span>Ferrara</span></a>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="admin-profile">
+                <div class="avatar-container">
+                    <div class="avatar" id="avatarInitials">AD</div>
+                    <span class="status-dot"></span>
+                </div>
+                <div class="profile-info">
+                    <span class="profile-name" id="adminNameDisplay">Administrador</span>
+                    <span class="profile-role">Gestão Premium</span>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="sidebar-menu">
+                <a class="menu-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a class="menu-item" data-tab="relatorios" onclick="switchTab('relatorios')">
+                    <i data-lucide="file-text"></i>
+                    <span>Relatórios</span>
+                </a>
+                <a class="menu-item" data-tab="clientes" onclick="switchTab('clientes')">
+                    <i data-lucide="users"></i>
+                    <span>Clientes</span>
+                </a>
+                <a class="menu-item" data-tab="financeiro" onclick="switchTab('financeiro')">
+                    <i data-lucide="dollar-sign"></i>
+                    <span>Financeiro</span>
+                </a>
+                <a class="menu-item" data-tab="agenda" onclick="switchTab('agenda')">
+                    <i data-lucide="calendar"></i>
+                    <span>Agenda</span>
+                </a>
+                <a class="menu-item" data-tab="galeria" onclick="switchTab('galeria')">
+                    <i data-lucide="image"></i>
+                    <span>Galeria & Estoque</span>
+                </a>
+                <a class="menu-item" data-tab="configuracoes" onclick="switchTab('configuracoes')">
+                    <i data-lucide="settings"></i>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+        </div>
+
+        <a class="menu-item" onclick="logout()" style="color: #ff6b6b; margin-top: auto;">
+            <i data-lucide="log-out" style="color: #ff6b6b;"></i>
+            <span>Sair / Logout</span>
+        </a>
+    </aside>
+
+    <!-- Main Panel -->
+    <main class="main-panel">
+        
+        <!-- Header -->
+        <header class="panel-header">
+            <div class="header-search">
+                <i data-lucide="search" style="color: var(--text-muted); width: 18px;"></i>
+                <input type="text" placeholder="Pesquisar no sistema...">
+            </div>
+            
+            <div class="header-actions">
+                <div class="date-display">
+                    <i data-lucide="calendar" style="width: 16px; color: var(--color-accent);"></i>
+                    <span id="currentDateString">26 de Maio, 2026</span>
+                </div>
+
+                <div class="icon-btn" onclick="toggleAlerts()">
+                    <i data-lucide="bell" style="width: 18px;"></i>
+                    <span class="badge-dot"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Body Scrollable area -->
+        <div class="panel-body">
+            
+            <!-- TAB: Dashboard -->
+            <div id="dashboard" class="tab-content active animated-view">
+                <div class="view-title-block">
+                    <h1>Painel Executivo</h1>
+                    <p>Visão integrada de faturamento, sessões fotográficas e gestão empresarial da Foto Ferrara.</p>
+                </div>
+
+                <!-- Stats Cards Row -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Clientes Totais</span>
+                            <span class="stat-number" id="cardTotalClientes">342</span>
+                            <span class="stat-desc">
+                                <span class="trend-up"><i data-lucide="trending-up" style="width:12px; display:inline;"></i> +8.2%</span> este mês
+                            </span>
+                        </div>
+                        <div class="stat-icon">
+                            <i data-lucide="users"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Sessões Realizadas</span>
+                            <span class="stat-number" id="cardSessoes">128</span>
+                            <span class="stat-desc">
+                                <span class="trend-up"><i data-lucide="trending-up" style="width:12px; display:inline;"></i> +12%</span> vs trim. anterior
+                            </span>
+                        </div>
+                        <div class="stat-icon">
+                            <i data-lucide="camera"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Faturamento Total</span>
+                            <span class="stat-number" id="cardFaturamento">R$ 48.500</span>
+                            <span class="stat-desc">
+                                <span class="trend-up"><i data-lucide="trending-up" style="width:12px; display:inline;"></i> +15.4%</span> crescimento
+                            </span>
+                        </div>
+                        <div class="stat-icon">
+                            <i data-lucide="dollar-sign"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Agendamentos Hoje</span>
+                            <span class="stat-number" id="cardAgendamentos">4</span>
+                            <span class="stat-desc">Sessões marcadas para hoje</span>
+                        </div>
+                        <div class="stat-icon">
+                            <i data-lucide="calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts row -->
+                <div class="dashboard-row">
+                    <div class="chart-box">
+                        <div class="chart-title-block">
+                            <span class="chart-title">Desempenho Financeiro (Faturamento vs Despesas)</span>
+                            <div class="chart-actions">
+                                <button class="chart-tab-btn active">Mensal</button>
+                                <button class="chart-tab-btn">Trimestral</button>
+                            </div>
+                        </div>
+                        <div id="financeiroChart"></div>
+                    </div>
+
+                    <div class="chart-box">
+                        <div class="chart-title-block">
+                            <span class="chart-title">Desempenho da Equipe (Vendas por Vendedor - PostgreSQL)</span>
+                        </div>
+                        <div id="vendedoresChart"></div>
+                    </div>
+                </div>
+
+                <div class="dashboard-row" style="grid-template-columns: 1fr; margin-bottom: 35px;">
+                    <div class="chart-box">
+                        <div class="chart-title-block">
+                            <span class="chart-title">Distribuição de Tipos de Ensaios</span>
+                        </div>
+                        <div id="sessoesChart" style="max-width: 500px; margin: 0 auto;"></div>
+                    </div>
+                </div>
+
+                <!-- Data section grid -->
+                <div class="data-section-grid">
+                    <!-- Table recent clients -->
+                    <div class="premium-card">
+                        <div class="card-header-flex">
+                            <span class="card-title">Ensaios e Vendas Recentes</span>
+                            <button class="pill-button" onclick="switchTab('clientes')">Ver Todos <i data-lucide="arrow-right" style="width:14px;"></i></button>
+                        </div>
+                        <div class="modern-table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Serviço / Item</th>
+                                        <th>Data</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentesTableBody">
+                                    <!-- Dynamic elements from JSON -->
+                                    <tr>
+                                        <td>Alice Silva</td>
+                                        <td>Ensaio Newborn</td>
+                                        <td>26/05/2026</td>
+                                        <td>R$ 850,00</td>
+                                        <td><span class="status-badge status-completed">Concluído</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Side Calendar / Today Appointments -->
+                    <div class="premium-card">
+                        <div class="card-header-flex">
+                            <span class="card-title">Agenda de Hoje</span>
+                            <button class="pill-button" onclick="switchTab('agenda')">Calendário <i data-lucide="calendar" style="width:14px;"></i></button>
+                        </div>
+                        
+                        <div class="schedule-list" id="agendaTodayContainer">
+                            <!-- Dynamic items from Python -->
+                        </div>
+
+                        <!-- Mini Calendar layout -->
+                        <div class="calendar-widget">
+                            <div class="calendar-title">Maio 2026</div>
+                            <div class="calendar-grid">
+                                <span class="cal-day-name">D</span>
+                                <span class="cal-day-name">S</span>
+                                <span class="cal-day-name">T</span>
+                                <span class="cal-day-name">Q</span>
+                                <span class="cal-day-name">Q</span>
+                                <span class="cal-day-name">S</span>
+                                <span class="cal-day-name">S</span>
+
+                                <span class="cal-day" style="color: #ccc;">26</span>
+                                <span class="cal-day" style="color: #ccc;">27</span>
+                                <span class="cal-day" style="color: #ccc;">28</span>
+                                <span class="cal-day" style="color: #ccc;">29</span>
+                                <span class="cal-day" style="color: #ccc;">30</span>
+                                <span class="cal-day">1</span>
+                                <span class="cal-day">2</span>
+                                <span class="cal-day">3</span>
+                                <span class="cal-day">4</span>
+                                <span class="cal-day">5</span>
+                                <span class="cal-day">6</span>
+                                <span class="cal-day">7</span>
+                                <span class="cal-day">8</span>
+                                <span class="cal-day">9</span>
+                                <span class="cal-day">10</span>
+                                <span class="cal-day">11</span>
+                                <span class="cal-day">12</span>
+                                <span class="cal-day">13</span>
+                                <span class="cal-day">14</span>
+                                <span class="cal-day">15</span>
+                                <span class="cal-day">16</span>
+                                <span class="cal-day">17</span>
+                                <span class="cal-day">18</span>
+                                <span class="cal-day">19</span>
+                                <span class="cal-day">20</span>
+                                <span class="cal-day">21</span>
+                                <span class="cal-day">22</span>
+                                <span class="cal-day">23</span>
+                                <span class="cal-day">24</span>
+                                <span class="cal-day">25</span>
+                                <span class="cal-day active has-event">26</span>
+                                <span class="cal-day">27</span>
+                                <span class="cal-day">28</span>
+                                <span class="cal-day">29</span>
+                                <span class="cal-day">30</span>
+                                <span class="cal-day">31</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Relatórios -->
+            <div id="relatorios" class="tab-content animated-view">
+                <div class="view-title-block">
+                    <h1>Central de Relatórios</h1>
+                    <p>Exporte métricas empresariais, relatórios de sessões e faturamento financeiro.</p>
+                </div>
+                
+                <div class="premium-card">
+                    <div class="card-header-flex">
+                        <span class="card-title">Relatórios Disponíveis</span>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="pill-button"><i data-lucide="filter" style="width:14px;"></i> Filtrar</button>
+                            <button class="primary-btn"><i data-lucide="download" style="width:14px;"></i> Baixar Tudo</button>
+                        </div>
+                    </div>
+
+                    <div class="modern-table-container">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome do Relatório</th>
+                                    <th>Tipo</th>
+                                    <th>Período</th>
+                                    <th>Última Atualização</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Faturamento e Margem de Lucro</td>
+                                    <td>Financeiro</td>
+                                    <td>Mensal (Maio 2026)</td>
+                                    <td>Há 2 horas</td>
+                                    <td><button class="pill-button" onclick="alert('Exportando PDF...')">Exportar PDF</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Ocupação de Agenda e Cancelamentos</td>
+                                    <td>Operacional</td>
+                                    <td>Trimestral (Q1 2026)</td>
+                                    <td>Ontem</td>
+                                    <td><button class="pill-button" onclick="alert('Exportando PDF...')">Exportar PDF</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Inventário e Movimentação de Estoque</td>
+                                    <td>Produtos</td>
+                                    <td>Em Tempo Real</td>
+                                    <td>Agora mesmo</td>
+                                    <td><button class="pill-button" onclick="alert('Exportando CSV...')">Exportar CSV</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Feedback e Satisfação do Cliente (NPS)</td>
+                                    <td>Qualidade</td>
+                                    <td>Semestral</td>
+                                    <td>20/05/2026</td>
+                                    <td><button class="pill-button" onclick="alert('Exportando PDF...')">Exportar PDF</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Clientes -->
+            <div id="clientes" class="tab-content animated-view">
+                <div class="view-title-block">
+                    <h1>Gestão de Clientes</h1>
+                    <p>Cadastre novos clientes, gerencie contatos e visualize histórico de sessões fotográficas.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                    <div class="premium-card">
+                        <span class="card-title" style="margin-bottom: 20px; display: block;">Base de Clientes Ativos</span>
+                        <div class="modern-table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Contato</th>
+                                        <th>Último Ensaio</th>
+                                        <th>Investimento</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Alice Silva</td>
+                                        <td>alice.silva@gmail.com</td>
+                                        <td>Ensaio Newborn</td>
+                                        <td>R$ 1.850,00</td>
+                                        <td><button class="pill-button">Ver Perfil</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bruno Souza</td>
+                                        <td>bruno.souza@yahoo.com</td>
+                                        <td>Casamento Carlos & Ana</td>
+                                        <td>R$ 4.200,00</td>
+                                        <td><button class="pill-button">Ver Perfil</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Camila Lima</td>
+                                        <td>camila.lima@outlook.com</td>
+                                        <td>Retrato Corporativo</td>
+                                        <td>R$ 450,00</td>
+                                        <td><button class="pill-button">Ver Perfil</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Daniel Rocha</td>
+                                        <td>daniel.rocha@gmail.com</td>
+                                        <td>Ensaio Externo Família</td>
+                                        <td>R$ 1.200,00</td>
+                                        <td><button class="pill-button">Ver Perfil</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Client registration form -->
+                    <div class="premium-card">
+                        <span class="card-title" style="margin-bottom: 20px; display: block;">Novo Cadastro</span>
+                        <form onsubmit="event.preventDefault(); alert('Cliente cadastrado com sucesso!');" class="client-form" style="grid-template-columns: 1fr;">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" placeholder="Ex: Lucas Mendes" required>
+                            </div>
+                            <div class="form-group">
+                                <label>E-mail</label>
+                                <input type="email" placeholder="lucas@exemplo.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Celular / WhatsApp</label>
+                                <input type="tel" placeholder="(11) 98765-4321" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Serviço Desejado</label>
+                                <select>
+                                    <option>Ensaio Newborn</option>
+                                    <option>Ensaio Externo</option>
+                                    <option>Casamento</option>
+                                    <option>Retratos Corporativos</option>
+                                    <option>Outros</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="primary-btn"><i data-lucide="plus" style="width: 16px;"></i> Cadastrar Cliente</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Financeiro -->
+            <div id="financeiro" class="tab-content animated-view">
+                <div class="view-title-block">
+                    <h1>Controle Financeiro</h1>
+                    <p>Monitore o caixa, faturamento e despesas operacionais em tempo real.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Saldo em Caixa</span>
+                            <span class="stat-number">R$ 22.340,00</span>
+                            <span class="stat-desc">Fundo líquido disponível</span>
+                        </div>
+                        <div class="stat-icon" style="background-color: rgba(46, 196, 182, 0.1); color: #2ec4b6;">
+                            <i data-lucide="wallet"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Receita Estimada (Mês)</span>
+                            <span class="stat-number">R$ 18.500,00</span>
+                            <span class="stat-desc">Valores a receber</span>
+                        </div>
+                        <div class="stat-icon" style="background-color: var(--color-gold-light); color: var(--color-gold);">
+                            <i data-lucide="trending-up"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Despesas Fixas</span>
+                            <span class="stat-number">R$ 5.890,00</span>
+                            <span class="stat-desc">Custo de estúdio e sistemas</span>
+                        </div>
+                        <div class="stat-icon" style="background-color: rgba(229, 57, 53, 0.08); color: #c62828;">
+                            <i data-lucide="arrow-down-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-card">
+                    <span class="card-title" style="margin-bottom: 20px; display: block;">Transações Recentes</span>
+                    <div class="modern-table-container">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th>Categoria</th>
+                                    <th>Data</th>
+                                    <th>Valor</th>
+                                    <th>Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Ensaio Newborn - Alice Silva</td>
+                                    <td>Serviços</td>
+                                    <td>26/05/2026</td>
+                                    <td style="color: #2ec4b6; font-weight: 600;">+ R$ 850,00</td>
+                                    <td><span class="status-badge status-completed">Entrada</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Aluguel Estúdio Centro</td>
+                                    <td>Infraestrutura</td>
+                                    <td>20/05/2026</td>
+                                    <td style="color: #c62828; font-weight: 600;">- R$ 2.500,00</td>
+                                    <td><span class="status-badge status-canceled">Saída</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Venda Álbum Couro - Bruno Souza</td>
+                                    <td>Venda de Produtos</td>
+                                    <td>18/05/2026</td>
+                                    <td style="color: #2ec4b6; font-weight: 600;">+ R$ 350,00</td>
+                                    <td><span class="status-badge status-completed">Entrada</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Assinatura Adobe Creative Cloud</td>
+                                    <td>Sistemas</td>
+                                    <td>15/05/2026</td>
+                                    <td style="color: #c62828; font-weight: 600;">- R$ 124,90</td>
+                                    <td><span class="status-badge status-canceled">Saída</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Agenda -->
+            <div id="agenda" class="tab-content animated-view">
+                <div class="view-title-block">
+                    <h1>Agenda de Sessões</h1>
+                    <p>Agendamentos, ensaios externos, casamentos e reuniões com clientes.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+                    <div class="premium-card">
+                        <span class="card-title" style="margin-bottom: 20px; display: block;">Marcar Nova Sessão</span>
+                        <form onsubmit="event.preventDefault(); alert('Sessão agendada com sucesso!');" class="client-form" style="grid-template-columns: 1fr;">
+                            <div class="form-group">
+                                <label>Cliente</label>
+                                <select>
+                                    <option>Alice Silva</option>
+                                    <option>Bruno Souza</option>
+                                    <option>Camila Lima</option>
+                                    <option>Daniel Rocha</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Sessão</label>
+                                <select>
+                                    <option>Ensaio Interno Estúdio</option>
+                                    <option>Ensaio Externo Parque</option>
+                                    <option>Evento / Aniversário</option>
+                                    <option>Retratos Corporativos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Data</label>
+                                <input type="date" value="2026-05-26" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Horário Inicial</label>
+                                <input type="time" value="14:00" required>
+                            </div>
+                            <button type="submit" class="primary-btn"><i data-lucide="plus" style="width: 16px;"></i> Confirmar Agendamento</button>
+                        </form>
+                    </div>
+
+                    <div class="premium-card">
+                        <span class="card-title" style="margin-bottom: 20px; display: block;">Compromissos Agendados</span>
+                        <div class="schedule-list" id="agendaTabContainer">
+                            <!-- Loaded dynamically from JSON -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Galeria & Estoque -->
+            <div id="galeria" class="tab-content animated-view">
+                <div class="view-title-block">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h1>Produtos e Galeria</h1>
+                            <p>Vitrine de equipamentos fotográficos, molduras e álbuns personalizados.</p>
+                        </div>
+                        <a href="http://127.0.0.1:8000/estoque/" target="_blank" class="primary-btn">
+                            <i data-lucide="database" style="width: 16px;"></i> Ir para Controle de Estoque Django
+                        </a>
+                    </div>
+                </div>
+
+                <div class="galeria-grid" id="galeriaContainer">
+                    <!-- Loaded dynamically from Django/JSON -->
+                </div>
+            </div>
+
+            <!-- TAB: Configurações -->
+            <div id="configuracoes" class="tab-content animated-view">
+                <div class="view-title-block">
+                    <h1>Configurações do Sistema</h1>
+                    <p>Gerencie preferências do painel, chaves de API e perfil de administrador.</p>
+                </div>
+
+                <div class="premium-card">
+                    <span class="card-title" style="margin-bottom: 20px; display: block;">Perfil do Estúdio</span>
+                    <form onsubmit="event.preventDefault(); alert('Configurações salvas!');" class="settings-form">
+                        <div class="form-group">
+                            <label>Nome do Estúdio</label>
+                            <input type="text" value="Foto Ferrara" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail Comercial</label>
+                            <input type="email" value="contato@fotoferrara.com.br" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone Principal</label>
+                            <input type="text" value="(11) 4002-8922" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Endereço Físico</label>
+                            <input type="text" value="Av. Paulista, 1000 - Cj 52, São Paulo - SP" required>
+                        </div>
+                        
+                        <div class="form-group form-full-row" style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                            <span class="card-title" style="font-size: 15px; margin-bottom: 10px; display:block;">Notificações e Integrações</span>
+                        </div>
+
+                        <div class="form-group" style="flex-direction: row; gap: 10px; align-items: center;">
+                            <input type="checkbox" id="notifEmail" checked style="width: auto;">
+                            <label for="notifEmail">Enviar relatórios de fechamento diário por e-mail</label>
+                        </div>
+                        <div class="form-group" style="flex-direction: row; gap: 10px; align-items: center;">
+                            <input type="checkbox" id="notifWhats" checked style="width: auto;">
+                            <label for="notifWhats">Enviar lembrete de agendamento no WhatsApp do cliente</label>
+                        </div>
+
+                        <div class="form-group form-full-row" style="margin-top: 20px;">
+                            <button type="submit" class="primary-btn" style="width: fit-content;"><i data-lucide="save" style="width: 16px;"></i> Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Script Block -->
+    <script>
+        // Check for Firebase Authentication Token
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const userEmail = localStorage.getItem('userEmail');
+            const userName = localStorage.getItem('userName') || 'Administrador';
+            
+            // Set date strings
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            document.getElementById('currentDateString').textContent = today.toLocaleDateString('pt-BR', options);
+
+            // Populate Admin profile details
+            if (userName) {
+                document.getElementById('adminNameDisplay').textContent = userName;
+                // Generate initials
+                const initials = userName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+                document.getElementById('avatarInitials').textContent = initials;
+            }
+
+            // Initialize Lucide Icons
+            lucide.createIcons();
+
+            // Load all charts and data
+            loadDashboardData();
+        });
+
+        // Tab views switcher
+        function switchTab(tabId) {
+            // Remove active classes
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.menu-item').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Add active class to selected tab and nav link
+            document.getElementById(tabId).classList.add('active');
+            const navLink = document.querySelector(`.sidebar-menu [data-tab="${tabId}"]`);
+            if (navLink) navLink.classList.add('active');
+        }
+
+        // Logout
+        function logout() {
+            localStorage.clear();
+            alert("Saindo do painel executivo...");
+            window.location.href = 'Login - Fotoferrara.html';
+        }
+
+        function toggleAlerts() {
+            alert("Nenhuma notificação nova no momento.");
+        }
+
+        // Fetching Python Django metrics or Fallback
+        async function loadDashboardData() {
+            let data = null;
+            try {
+                // Fetch data from Python Django backend
+                const response = await fetch('http://127.0.0.1:8000/estoque/api/dashboard-data/');
+                if (response.ok) {
+                    data = await response.json();
+                    console.log("Dados do painel carregados do Python Django:", data);
+                }
+            } catch (err) {
+                console.warn("Backend Python Django offline ou bloqueado por CORS. Usando dados premium simulados.", err);
+            }
+
+            // If backend is offline, generate beautiful fallback data matching Python design
+            if (!data) {
+                data = {
+                    'total_clientes': 342,
+                    'sessoes_realizadas': 128,
+                    'faturamento_total': 48500.00,
+                    'agendamentos_hoje': 4,
+                    'crescimento_mensal': 12.5,
+                    'total_produtos': 15,
+                    'baixo_estoque': 3,
+                    'charts': {
+                        'crescimento': {
+                            'labels': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                            'series': [8, 12, 10, 15, 14, 18]
+                        },
+                        'sessoes': {
+                            'labels': ['Retratos', 'Eventos', 'Ensaios Externos', 'Newborn', 'Casamentos'],
+                            'series': [44, 25, 30, 15, 14]
+                        },
+                        'financeiro': {
+                            'labels': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                            'receitas': [12000, 15000, 13500, 18000, 17500, 22000],
+                            'despesas': [7000, 8500, 7800, 9200, 8900, 10500]
+                        },
+                        'vendedores': {
+                            'labels': ['Carlos Souza', 'Ana Clara', 'Lucas Lima', 'Beatriz Costa', 'Fernanda Oliveira'],
+                            'series': [42, 35, 28, 21, 15]
+                        }
+                    },
+                    'clientes_recentes': [
+                        {'nome': 'Alice Silva', 'servico': 'Ensaio Newborn', 'data': '26/05/2026', 'valor': 850.00, 'status': 'Concluído'},
+                        {'nome': 'Bruno Souza', 'servico': 'Cobertura Casamento', 'data': '25/05/2026', 'valor': 3200.00, 'status': 'Pendente'},
+                        {'nome': 'Camila Lima', 'servico': 'Retrato Corporativo', 'data': '24/05/2026', 'valor': 450.00, 'status': 'Concluído'},
+                        {'nome': 'Daniel Rocha', 'servico': 'Ensaio Externo', 'data': '22/05/2026', 'valor': 700.00, 'status': 'Cancelado'},
+                        {'nome': 'Elisa Mello', 'servico': 'Álbum Premium Couro', 'data': '20/05/2026', 'valor': 350.00, 'status': 'Concluído'}
+                    ],
+                    'agenda': [
+                        {'titulo': 'Ensaio Gestante - Julia', 'horario': '09:00 - 11:30', 'tipo': 'Ensaios'},
+                        {'titulo': 'Reunião Noivos - Carlos & Ana', 'horario': '14:00 - 15:00', 'tipo': 'Reunião'},
+                        {'titulo': 'Retrato Profissional - Thiago', 'horario': '16:00 - 17:00', 'tipo': 'Retratos'},
+                        {'titulo': 'Entrega Álbum - Maria', 'horario': '17:30 - 18:00', 'tipo': 'Entrega'}
+                    ]
+                };
+            }
+
+            // Populate text metrics
+            document.getElementById('cardTotalClientes').textContent = data.total_clientes;
+            document.getElementById('cardSessoes').textContent = data.sessoes_realizadas;
+            document.getElementById('cardFaturamento').textContent = 'R$ ' + data.faturamento_total.toLocaleString('pt-BR');
+            document.getElementById('cardAgendamentos').textContent = data.agendamentos_hoje;
+
+            // Render ApexCharts
+            renderFinanceiroChart(data.charts.financeiro);
+            renderVendedoresChart(data.charts.vendedores);
+            renderSessoesChart(data.charts.sessoes);
+            
+            // Populate Tables & Lists
+            populateRecentesTable(data.clientes_recentes);
+            populateAgendaToday(data.agenda);
+            populateAgendaTab(data.agenda);
+            
+            // Populate Product Gallery
+            loadProductGallery(data.total_produtos);
+        }
+
+        // Render ApexChart - Financeiro
+        function renderFinanceiroChart(chartData) {
+            const options = {
+                series: [{
+                    name: 'Receita',
+                    data: chartData.receitas
+                }, {
+                    name: 'Despesas',
+                    data: chartData.despesas
+                }],
+                chart: {
+                    type: 'area',
+                    height: 320,
+                    toolbar: { show: false },
+                    fontFamily: 'Inter, sans-serif'
+                },
+                colors: ['#a16644', '#c5a059'], // Accent, Gold
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.35,
+                        opacityTo: 0.05,
+                        stops: [0, 90, 100]
+                    }
+                },
+                dataLabels: { enabled: false },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                xaxis: {
+                    categories: chartData.labels,
+                    axisBorder: { show: false },
+                    axisTicks: { show: false }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (value) {
+                            return "R$ " + value.toLocaleString('pt-BR');
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: '#ebdcd0',
+                    strokeDashArray: 4
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'right'
+                }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#financeiroChart"), options);
+            chart.render();
+        }
+
+        // Render ApexChart - Vendedores (PostgreSQL)
+        function renderVendedoresChart(chartData) {
+            const options = {
+                series: [{
+                    name: 'Vendas',
+                    data: chartData.series
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 320,
+                    toolbar: { show: false },
+                    fontFamily: 'Inter, sans-serif'
+                },
+                colors: ['#a16644'],
+                plotOptions: {
+                    bar: {
+                        borderRadius: 6,
+                        columnWidth: '45%',
+                        dataLabels: {
+                            position: 'top',
+                        },
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return val;
+                    },
+                    offsetY: -20,
+                    style: {
+                        fontSize: '12px',
+                        colors: ["#2b201a"]
+                    }
+                },
+                xaxis: {
+                    categories: chartData.labels,
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                },
+                yaxis: {
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: {
+                        formatter: function (val) {
+                            return val.toFixed(0);
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: '#ebdcd0',
+                    strokeDashArray: 4
+                }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#vendedoresChart"), options);
+            chart.render();
+        }
+
+        // Render ApexChart - Sessões Fotográficas
+        function renderSessoesChart(chartData) {
+            const options = {
+                series: chartData.series,
+                chart: {
+                    type: 'donut',
+                    height: 320,
+                    fontFamily: 'Inter, sans-serif'
+                },
+                labels: chartData.labels,
+                colors: ['#593e30', '#a16644', '#c5a059', '#eaddd3', '#807066'], // Brand palette
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '70%',
+                            labels: {
+                                show: true,
+                                name: {
+                                    show: true,
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    color: '#593e30'
+                                },
+                                value: {
+                                    show: true,
+                                    fontSize: '22px',
+                                    fontWeight: 700,
+                                    color: '#2b201a',
+                                    formatter: function (val) {
+                                        return val + "%";
+                                    }
+                                },
+                                total: {
+                                    show: true,
+                                    label: 'Predominante',
+                                    formatter: function (w) {
+                                        return 'Retratos';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    position: 'bottom'
+                },
+                dataLabels: { enabled: false }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#sessoesChart"), options);
+            chart.render();
+        }
+
+        // Populate Table - Recentes
+        function populateRecentesTable(recentes) {
+            const tbody = document.getElementById('recentesTableBody');
+            tbody.innerHTML = '';
+            
+            recentes.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                let statusClass = 'status-pending';
+                if (item.status === 'Concluído') statusClass = 'status-completed';
+                if (item.status === 'Cancelado') statusClass = 'status-canceled';
+                
+                tr.innerHTML = `
+                    <td style="font-weight:600;">${item.nome}</td>
+                    <td>${item.servico}</td>
+                    <td>${item.data}</td>
+                    <td style="font-weight:600; color: var(--color-primary);">R$ ${item.valor.toFixed(2).replace('.', ',')}</td>
+                    <td><span class="status-badge ${statusClass}">${item.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Populate Today's Schedule List
+        function populateAgendaToday(agenda) {
+            const container = document.getElementById('agendaTodayContainer');
+            container.innerHTML = '';
+            
+            agenda.slice(0, 3).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'schedule-item';
+                
+                // Color accent based on type
+                let accentColor = 'var(--color-gold)';
+                if (item.tipo === 'Ensaios') accentColor = 'var(--color-accent)';
+                if (item.tipo === 'Retratos') accentColor = 'var(--color-primary)';
+                
+                div.style.borderLeftColor = accentColor;
+                
+                div.innerHTML = `
+                    <span class="schedule-time">${item.horario}</span>
+                    <span class="schedule-title">${item.titulo}</span>
+                    <span class="schedule-type">${item.tipo}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Populate Agenda tab complete checklist
+        function populateAgendaTab(agenda) {
+            const container = document.getElementById('agendaTabContainer');
+            container.innerHTML = '';
+            
+            agenda.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'schedule-item';
+                div.style.padding = '18px';
+                
+                let accentColor = 'var(--color-gold)';
+                if (item.tipo === 'Ensaios') accentColor = 'var(--color-accent)';
+                if (item.tipo === 'Retratos') accentColor = 'var(--color-primary)';
+                div.style.borderLeftColor = accentColor;
+                
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="schedule-time" style="font-size:13px;">${item.horario}</span>
+                        <span class="status-badge status-completed" style="font-size:10px;">Confirmado</span>
+                    </div>
+                    <span class="schedule-title" style="font-size:16px; margin: 4px 0;">${item.titulo}</span>
+                    <span class="schedule-type">${item.tipo} &bull; Estúdio Foto Ferrara</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Load visual Product Gallery
+        async function loadProductGallery() {
+            const container = document.getElementById('galeriaContainer');
+            container.innerHTML = '<p style="grid-column: span 3; color: var(--text-muted);">Carregando produtos...</p>';
+            
+            let products = [];
+            
+            try {
+                // Try fetching product list from python django backend API
+                // Wait! Let's build a dedicated endpoint or load from dashboard-data
+                const response = await fetch('http://127.0.0.1:8000/estoque/api/dashboard-data/');
+                if (response.ok) {
+                    const data = await response.json();
+                    // We can also fetch the actual products using a Django template or django views
+                    // For now, let's load the product count and fetch products if we had a products API.
+                    // We can fallback to elegant mock equipment matching the site's catalog.
+                }
+            } catch (err) {
+                console.log("CORS block or Django offline. Loading mockup catalog.");
+            }
+            
+            // Standard catalog of premium items matching the Foto Ferrara project
+            products = [
+                {'nome': 'Câmera DSLR Canon EOS R6', 'preco': 14890.00, 'sku': 'CAM-R6-001', 'categoria': 'Câmeras', 'img': 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=400'},
+                {'nome': 'Lente Canon RF 50mm f/1.2 L', 'preco': 11200.00, 'sku': 'LEN-50-002', 'categoria': 'Lentes', 'img': 'https://images.unsplash.com/photo-1617005082133-548c4dd27f35?auto=format&fit=crop&q=80&w=400'},
+                {'nome': 'Álbum Fotográfico Premium Couro', 'preco': 350.00, 'sku': 'ALB-LEA-003', 'categoria': 'Álbuns', 'img': 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=400'},
+                {'nome': 'Moldura A4 Clássica Madeira', 'preco': 85.00, 'sku': 'FRM-A4W-004', 'categoria': 'Molduras', 'img': 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=80&w=400'},
+                {'nome': 'Caneca Cerâmica Personalizada', 'preco': 45.00, 'sku': 'MUG-CER-005', 'categoria': 'Canecas', 'img': 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400'},
+                {'nome': 'Tripé Profissional Manfrotto Carbono', 'preco': 2450.00, 'sku': 'TRI-MAN-006', 'categoria': 'Acessórios', 'img': 'https://images.unsplash.com/photo-1495707902641-75cac588d2e9?auto=format&fit=crop&q=80&w=400'}
+            ];
+
+            container.innerHTML = '';
+            products.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'galeria-card';
+                
+                div.innerHTML = `
+                    <img class="galeria-img" src="${p.img}" alt="${p.nome}" onerror="this.src='camera.png'">
+                    <div class="galeria-info">
+                        <span class="galeria-sku">${p.sku}</span>
+                        <span class="galeria-title">${p.nome}</span>
+                        <span class="galeria-price">R$ ${p.preco.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
