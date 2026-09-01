@@ -4,154 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrar - FotoFerrara</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="assets/css/theme.css">
+
     <style>
-         header {
+        body { min-height: 100vh; }
+
+        .auth-wrapper {
+            flex-grow: 1;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: white;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-        }
-        .logo a{
-            text-decoration: none;
-            color: black;
-            font-size: 24px;
-            font-weight: bold;
-            margin-left: 20px;
-        }
-        nav {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-        }
-        nav a {
-            color: #a16644;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 500;
-            padding: 8px 18px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        nav a.btn, nav a.btn-cadastro {
-            background: #a16644;
-            color: #fff;
-            font-weight: bold;
-        }
-        nav a:hover {
-            background: #f4d1b1;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fdf8f4;
-        }
-        .container {
-            display: flex;
-            height: 100vh;
             justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
         }
-        .left {
-            width: 1000px;
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 40%px;
-            background: #fdf8f4;
-        }
-        .left h1 {
-            font-size: 32px;
-            color: #333;
-        }
-        .left p {
-            font-size: 16px;
-            color: #666;
             text-align: center;
-            max-width: 100%;
         }
+
+        .auth-card h1 {
+            font-size: 30px;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        .auth-card > p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 28px;
+        }
+
         .form {
-            width: 80%;
-        }
-        .form input {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            text-align: left;
         }
-        .form a {
+
+        .form a.forgot {
             display: block;
             text-align: right;
-            color: #666;
-            font-size: 14px;
+            color: var(--text-muted);
+            font-size: 13px;
             text-decoration: none;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-        .btn {
-            width: 103%;
-            padding: 12px;
-            background: #a16644;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
+
+        .form a.forgot:hover {
+            color: var(--color-accent);
         }
+
+        .form button.primary-btn {
+            width: 100%;
+            margin-top: 4px;
+        }
+
         .register {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
         }
+
         .register a {
-            color: #a16644;
+            color: var(--color-accent);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
         }
-        footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: #f4d1b1;
-            text-align: center;
-            padding: 10px;
-            color: #333;
+
+        .register a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
-<body>
-    <header>
-        <div class="logo">
-            <a href="HomePage - Fotoferrara.html">FotoFerrara</a>
-        </div>
-        <nav>
+<body class="animated-view">
+    <header class="site-header">
+        <a href="HomePage - Fotoferrara.html" class="logo">
+            <div class="logo-box"><i data-lucide="camera"></i></div>
+            <span class="logo-text">Foto<span>Ferrara</span></span>
+        </a>
+        <nav class="site-nav">
             <a href="HomePage - Fotoferrara.html">Home</a>
             <a href="#">Ajuda</a>
-            <a href="Cadastro - Fotoferrara.html" class="btn">Criar Conta</a>
+            <a href="Cadastro - Fotoferrara.html" class="primary-btn">Criar Conta</a>
         </nav>
     </header>
-    <div class="container">
-        <div class="left">
+
+    <div class="auth-wrapper">
+        <div class="auth-card premium-card">
             <h1>Entrar</h1>
             <p>Junte-se a outros entusiastas da fotografia agora!</p>
             <form id="loginForm" class="form">
-                <input type="email" id="loginEmail" placeholder="Digite seu e-mail" required>
-                <input type="password" id="loginSenha" placeholder="Senha" required>
-                <a href="#">Esqueceu sua senha?</a>
-                <button class="btn" type="submit">Entrar</button>
+                <div class="form-group">
+                    <label for="loginEmail">E-mail</label>
+                    <input type="email" id="loginEmail" placeholder="Digite seu e-mail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginSenha">Senha</label>
+                    <input type="password" id="loginSenha" placeholder="Senha" required>
+                </div>
+                <a href="#" class="forgot">Esqueceu sua senha?</a>
+                <button class="primary-btn" type="submit">Entrar</button>
             </form>
             <div class="register">
                 <p>Não tem uma conta? <a href="Cadastro - Fotoferrara.html">Criar Nova Conta</a></p>
             </div>
         </div>
-        <div class="right"></div>
     </div>
-    <footer>
-        &copy; 2024 FotoFerrara - Todos os direitos reservados
+
+    <footer class="site-footer">
+        &copy; 2026 FotoFerrara - Todos os direitos reservados
     </footer>
+
     <script src="Cadastro-Login_FotoFerrara.js"></script>
-    
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>

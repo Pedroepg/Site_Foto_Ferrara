@@ -1,171 +1,272 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <title>Controle de Estoque</title>
-  <link rel="stylesheet" href="style.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css?family=Hepta+Slab:400,700|Lato:400,700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque - FotoFerrara</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="assets/css/theme.css">
+
+    <style>
+        .page-body {
+            padding: 40px 60px;
+            flex-grow: 1;
+        }
+
+        .page-title-block {
+            margin-bottom: 30px;
+        }
+
+        .page-title-block h1 {
+            font-size: 26px;
+            color: var(--color-primary);
+        }
+
+        .page-title-block p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 22px;
+        }
+
+        .stock-card {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: var(--transition);
+        }
+
+        .stock-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stock-card h3 {
+            font-size: 14px;
+            letter-spacing: 0.6px;
+            color: var(--color-accent);
+        }
+
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-main);
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stock-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .qty-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-cream);
+            color: var(--color-primary);
+            font-size: 15px;
+            line-height: 1;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .qty-btn:hover {
+            background-color: var(--color-light-brown);
+            border-color: var(--color-accent);
+        }
+
+        .stock-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .stock-actions .primary-btn,
+        .stock-actions .outline-btn {
+            flex: 1;
+            padding: 9px;
+            font-size: 13px;
+        }
+    </style>
 </head>
+<body class="animated-view">
+    <header class="site-header">
+        <a href="HomePage - Fotoferrara.html" class="logo">
+            <div class="logo-box"><i data-lucide="camera"></i></div>
+            <span class="logo-text">Foto<span>Ferrara</span></span>
+        </a>
+        <nav class="site-nav">
+            <a href="HomePage - Fotoferrara.html">Início</a>
+            <a href="#">Relatórios</a>
+            <a href="Login - Fotoferrara.html">Meu Login</a>
+            <a href="#">Configurações</a>
+            <a href="dashboard.html" class="primary-btn">Estoque</a>
+        </nav>
+    </header>
 
-<body>
-  <main>
-    <div class="store-area">
-      <div class="logo-container">
-        <img src="images/camera.png" alt="">
-        <a href="#" class="logo">FotoFerrara</a>
-
-        <div class="navbar">
-          <a href="#">Início</a>
-          <a href="#">Relatórios</a>
-          <a href="#">Meu Login</a>
-          <a href="#">Configurações</a>
-          <button class="store-btn">Estoque</button>
+    <main class="page-body">
+        <div class="page-title-block">
+            <h1>Controle de Estoque</h1>
+            <p>Visão rápida das categorias de produtos da loja Foto Ferrara.</p>
         </div>
-      </div>
-    </div>
-  </main>
 
-  <hr class="divisoria">
+        <div class="stock-grid">
 
-  <section class="section-container">
-    <div class="container">
+            <div class="stock-card premium-card">
+                <h3>FOTOS</h3>
+                <div class="stock-item">Foto 10x15 Brilho <button class="qty-btn">−</button></div>
+                <div class="stock-item">Foto 15x21 Fosca <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
 
-      <div class="card">
-        <h3>FOTOS</h3>
-        <div class="item">Foto 10x15 Brilho <button class="minus">−</button></div>
-        <div class="item">Foto 15x21 Fosca <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
+            <div class="stock-card premium-card">
+                <h3>MOLDURAS</h3>
+                <div class="stock-item">Moldura A4 Preta <button class="qty-btn">−</button></div>
+                <div class="stock-item">Moldura 20x25 Dourada <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>CANECAS</h3>
+                <div class="stock-item">Caneca Branca Personalizada <button class="qty-btn">−</button></div>
+                <div class="stock-item">Caneca com Interior Colorido <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>QUADROS</h3>
+                <div class="stock-item">Quadro Decorativo Médio <button class="qty-btn">−</button></div>
+                <div class="stock-item">Tela Canvas 40x60 <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>RELÓGIOS</h3>
+                <div class="stock-item">Relógio Parede Vintage <button class="qty-btn">−</button></div>
+                <div class="stock-item">Relógio com Foto Personalizada <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>ÁLBUNS</h3>
+                <div class="stock-item">Álbum 200 Fotos <button class="qty-btn">−</button></div>
+                <div class="stock-item">Álbum Premium Couro <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>CÂMERAS</h3>
+                <div class="stock-item">Câmera DSLR Canon <button class="qty-btn">−</button></div>
+                <div class="stock-item">Câmera Instantânea Fujifilm <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>LENTES</h3>
+                <div class="stock-item">Lente 50mm f/1.8 <button class="qty-btn">−</button></div>
+                <div class="stock-item">Lente 18-55mm <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>ILUMINAÇÃO</h3>
+                <div class="stock-item">Ring Light 18" <button class="qty-btn">−</button></div>
+                <div class="stock-item">Softbox com Tripé <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>ACESSÓRIOS</h3>
+                <div class="stock-item">Cartão SD 64GB <button class="qty-btn">−</button></div>
+                <div class="stock-item">Tripé Fotográfico <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>IMPRESSORAS</h3>
+                <div class="stock-item">Impressora Fotográfica Epson <button class="qty-btn">−</button></div>
+                <div class="stock-item">Cartucho Tinta Colorido <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>PAPÉIS FOTOGRÁFICOS</h3>
+                <div class="stock-item">Papel Glossy A4 <button class="qty-btn">−</button></div>
+                <div class="stock-item">Papel Matte 10x15 <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
+            <div class="stock-card premium-card">
+                <h3>ENFEITES</h3>
+                <div class="stock-item">Porta-Retrato de Madeira <button class="qty-btn">−</button></div>
+                <div class="stock-item">Mini Suporte de Mesa <button class="qty-btn">−</button></div>
+                <div class="stock-actions">
+                    <button class="primary-btn">+</button>
+                    <button class="outline-btn">−</button>
+                </div>
+            </div>
+
         </div>
-      </div>
+    </main>
 
-      <div class="card">
-        <h3>MOLDURAS</h3>
-        <div class="item">Moldura A4 Preta <button class="minus">−</button></div>
-        <div class="item">Moldura 20x25 Dourada <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
+    <footer class="site-footer">
+        &copy; 2026 FotoFerrara - Todos os direitos reservados
+    </footer>
 
-      <div class="card">
-        <h3>CANECAS</h3>
-        <div class="item">Caneca Branca Personalizada <button class="minus">−</button></div>
-        <div class="item">Caneca com Interior Colorido <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>QUADROS</h3>
-        <div class="item">Quadro Decorativo Médio <button class="minus">−</button></div>
-        <div class="item">Tela Canvas 40x60 <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>RELOGIOS</h3>
-        <div class="item">Relógio Parede Vintage <button class="minus">−</button></div>
-        <div class="item">Relógio com Foto Personalizada <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>ÁLBUNS</h3>
-        <div class="item">Álbum 200 Fotos <button class="minus">−</button></div>
-        <div class="item">Álbum Premium Couro <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>CÂMERAS</h3>
-        <div class="item">Câmera DSLR Canon <button class="minus">−</button></div>
-        <div class="item">Câmera Instantânea Fujifilm <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>LENTES</h3>
-        <div class="item">Lente 50mm f/1.8 <button class="minus">−</button></div>
-        <div class="item">Lente 18-55mm <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>ILUMINAÇÃO</h3>
-        <div class="item">Ring Light 18” <button class="minus">−</button></div>
-        <div class="item">Softbox com Tripé <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>ACESSÓRIOS</h3>
-        <div class="item">Cartão SD 64GB <button class="minus">−</button></div>
-        <div class="item">Tripé Fotográfico <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>IMPRESSORAS</h3>
-        <div class="item">Impressora Fotográfica Epson <button class="minus">−</button></div>
-        <div class="item">Cartucho Tinta Colorido <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>PAPÉIS FOTOGRÁFICOS</h3>
-        <div class="item">Papel Glossy A4 <button class="minus">−</button></div>
-        <div class="item">Papel Matte 10x15 <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>ENFEITES</h3>
-        <div class="item">Porta-Retrato de Madeira <button class="minus">−</button></div>
-        <div class="item">Mini Suporte de Mesa <button class="minus">−</button></div>
-        <div class="actions">
-          <button class="plus">+</button>
-          <button class="remove">−</button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
-
 </html>

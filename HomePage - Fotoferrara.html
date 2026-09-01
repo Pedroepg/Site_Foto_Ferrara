@@ -4,196 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FotoFerrara - Capture Momentos Únicos</title>
+
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Design system compartilhado com o dashboard -->
+    <link rel="stylesheet" href="assets/css/theme.css">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: white;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .logo {
-            /* Adicione estilos caso queira centralizar ou definir largura, etc */
-        }
-        .logo a {
-            text-decoration: none;
-            color: black;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-        }
-        .btn {
-            background: #5856d6;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
         .hero {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 50px;
-            background: white;
+            gap: 50px;
+            padding: 70px 60px;
+            background-color: var(--bg-cream);
         }
         .hero-text {
-            max-width: 50%;
+            max-width: 520px;
+        }
+        .hero-text h1 {
+            font-size: 42px;
+            color: var(--color-primary);
+            line-height: 1.15;
+            margin-bottom: 18px;
+        }
+        .hero-text p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 28px;
         }
         .hero img {
-            max-width: 40%;
-            border-radius: 10px;
+            max-width: 42%;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-premium);
         }
-        .cta {
+        .cta-banner {
             text-align: center;
-            background: #5856d6;
-            color: white;
-            padding: 20px;
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .gallery {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            padding: 20px;
-            background: #5856d6;
-        }
-        .gallery img {
-            width: 80px;
-            height: auto;
-            border-radius: 5px;
-        }
-        .section {
-            text-align: center;
-            padding: 50px;
-            background: #e6e6fa;
-        }
-        .section h2 {
-            font-size: 28px;
-            color: #333;
-        }
-        .section p {
-            color: #666;
+            background-color: var(--color-primary);
+            color: #fff;
+            padding: 18px;
             font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
         .blog {
-            padding: 50px;
-            background: #f8f8ff;
+            padding: 70px 60px;
+            background-color: var(--bg-cream);
         }
         .blog h2 {
             text-align: center;
-            font-size: 32px;
-            color: #333;
+            font-size: 30px;
+            color: var(--color-primary);
+            margin-bottom: 40px;
         }
         .blog-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 24px;
             flex-wrap: wrap;
         }
         .blog-item {
-            background: white;
+            max-width: 320px;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         .blog-item img {
             width: 100%;
-            border-radius: 10px;
+            height: 190px;
+            object-fit: cover;
+            border-radius: var(--border-radius-md);
         }
         .blog-item h3 {
-            font-size: 20px;
-            color: #333;
+            font-size: 17px;
+            color: var(--color-primary);
+            line-height: 1.35;
         }
         .blog-item p {
             font-size: 14px;
-            color: #666;
+            color: var(--text-muted);
+            line-height: 1.5;
         }
         .newsletter {
             text-align: center;
-            background: #5856d6;
-            color: white;
-            padding: 40px;
+            background-color: var(--bg-sidebar);
+            color: #fff;
+            padding: 60px 20px;
+        }
+        .newsletter h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+        .newsletter p {
+            color: var(--text-light);
+            margin-bottom: 26px;
+        }
+        .newsletter form {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         .newsletter input {
-            padding: 10px;
-            width: 250px;
-            border: none;
-            border-radius: 5px;
-            margin-right: 10px;
+            width: 280px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background-color: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+        .newsletter input::placeholder {
+            color: var(--text-light);
         }
         .newsletter button {
-            padding: 10px 20px;
-            background: white;
-            color: #5856d6;
+            padding: 12px 24px;
+            background-color: var(--color-gold);
+            color: var(--bg-sidebar);
             border: none;
-            border-radius: 5px;
-            font-weight: bold;
+            border-radius: var(--border-radius-md);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
         }
-        footer {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 20px;
+        .newsletter button:hover {
+            background-color: var(--color-gold-hover);
+        }
+
+        @media (max-width: 800px) {
+            .hero { flex-direction: column; padding: 40px 24px; text-align: center; }
+            .hero-text { max-width: 100%; }
+            .hero img { max-width: 100%; }
+            .site-nav { display: none; }
         }
     </style>
 </head>
-<body>
-    <header>
-        <div class="logo">
-            <a href="HomePage - Fotoferrara.html">FotoFerrara</a>
-        </div>
-        <nav>
+<body class="animated-view">
+    <header class="site-header">
+        <a href="HomePage - Fotoferrara.html" class="logo">
+            <div class="logo-box"><i data-lucide="camera"></i></div>
+            <span class="logo-text">Foto<span>Ferrara</span></span>
+        </a>
+        <nav class="site-nav">
             <a href="#">Impressões de fotos</a>
             <a href="#">Molduras e Decoração</a>
             <a href="#">Acessórios</a>
             <a href="#">Foto-presentes</a>
-            <a href="#" class="btn">Entrar</a>
+            <a href="Login - Fotoferrara.html" class="primary-btn">Entrar</a>
         </nav>
     </header>
+
     <section class="hero">
         <div class="hero-text">
             <h1>Capture Momentos Únicos</h1>
             <p>Libere a criatividade com fotos de alta qualidade. Capturando e revelando lindamente os momentos da sua vida.</p>
-            <a href="Cadastro - Fotoferrara.html" class="btn">Cadastrar-se</a>
+            <a href="Cadastro - Fotoferrara.html" class="primary-btn">Cadastrar-se</a>
         </div>
         <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008443820x352554530665626400/pexels-photo-185933.jpeg" alt="Fotos de polaroid dispostas sobre um mapa, representando lembranças de viagens">
     </section>
-    <div class="cta">A loja número 1 de artigos fotográficos</div>
+
+    <div class="cta-banner">A loja número 1 de artigos fotográficos</div>
+
     <section class="blog">
         <h2>Últimos artigos do blog</h2>
         <div class="blog-container">
-            <div class="blog-item">
+            <div class="blog-item premium-card">
                 <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008702718x708996517043491100/pexels-photo-944382.jpeg" alt="Câmeras e acessórios antigos sobre uma mesa">
                 <h3>Capturando memórias: transformando momentos com nossos fundamentos fotográficos</h3>
                 <p>Explore as ferramentas da Foto Ferrara para dar vida aos seus momentos especiais.</p>
             </div>
-            <div class="blog-item">
+            <div class="blog-item premium-card">
                 <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008605529x593834449729194800/pexels-photo-952590.jpeg" alt="Molduras com fotos artísticas decorando um ambiente">
                 <h3>A arte do enquadramento: transformando fotos do dia a dia em peças marcantes</h3>
                 <p>Descubra como a moldura certa pode transformar uma simples fotografia em uma obra de arte.</p>
             </div>
-            <div class="blog-item">
+            <div class="blog-item premium-card">
                 <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008535625x643210802308502600/pexels-photo-1942489.jpeg" alt="Fotos impressas em molduras de diferentes estilos">
                 <h3>De pixels a impressões: transformando suas memórias com fotos-presentes personalizadas</h3>
                 <p>Descubra como transformar suas memórias digitais em impressões que geram lembranças preciosas.</p>
             </div>
         </div>
     </section>
+
     <section class="newsletter">
         <h2>Junte-se à nossa família Foto Ferrara</h2>
         <p>Mantenha-se atualizado sobre nossos mais recentes equipamentos fotográficos e soluções de impressão.</p>
@@ -203,8 +200,13 @@
             <button type="submit">Inscrever-se</button>
         </form>
     </section>
-    <footer>
-        &copy; 2024 FotoFerrara - Todos os direitos reservados
+
+    <footer class="site-footer">
+        &copy; 2026 FotoFerrara - Todos os direitos reservados
     </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
