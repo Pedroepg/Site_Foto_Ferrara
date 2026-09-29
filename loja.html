@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja - FotoFerrara</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body class="animated-view">
+    <div id="site-header"></div>
+
+    <main class="page-container">
+        <div class="page-heading">
+            <h1 id="tituloLoja">Loja</h1>
+            <p id="subtituloLoja">Tudo para capturar, revelar e decorar seus momentos.</p>
+        </div>
+
+        <div class="store-toolbar">
+            <div class="chips" id="chips"></div>
+            <input type="search" id="busca" placeholder="Buscar produto..." aria-label="Buscar produto">
+            <select id="ordem" aria-label="Ordenar produtos">
+                <option value="nome">Nome (A–Z)</option>
+                <option value="menor">Menor preço</option>
+                <option value="maior">Maior preço</option>
+            </select>
+        </div>
+
+        <div class="product-grid" id="grade"></div>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="assets/js/app.js"></script>
+    <script>
+        const params = new URLSearchParams(location.search);
+        let categoria = CATEGORIAS[params.get('cat')] ? params.get('cat') : 'todos';
+        const busca = document.getElementById('busca');
+        const ordem = document.getElementById('ordem');
+        busca.value = params.get('q') || '';
+
+        function desenharChips() {
+            const itens = [['todos', 'Todos'], ...Object.entries(CATEGORIAS)];
+            document.getElementById('chips').innerHTML = itens.map(([k, l]) =>
+                `<button class="chip ${k === categoria ? 'active' : ''}" data-cat="${k}" style="width:auto">${l}</button>`).join('');
+            document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+                categoria = b.dataset.cat;
+                history.replaceState(null, '', categoria === 'todos' ? 'loja.html' : `loja.html?cat=${categoria}`);
+                desenharChips(); desenharProdutos(); atualizarTitulo();
+            }));
+        }
+        function atualizarTitulo() {
+            document.getElementById('tituloLoja').textContent = categoria === 'todos' ? 'Loja' : CATEGORIAS[categoria];
+        }
+        function desenharProdutos() {
+            const termo = busca.value.trim().toLowerCase();
+            let lista = PRODUTOS.filter(p => (categoria === 'todos' || p.cat === categoria) &&
+                (!termo || (p.nome + ' ' + p.desc).toLowerCase().includes(termo)));
+            if (ordem.value === 'menor') lista.sort((a, b) => a.preco - b.preco);
+            else if (ordem.value === 'maior') lista.sort((a, b) => b.preco - a.preco);
+            else lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+            const grade = document.getElementById('grade');
+            if (!lista.length) {
+                grade.innerHTML = '<div class="empty-state premium-card" style="grid-column:1/-1"><h3>Nenhum produto encontrado</h3><p>Tente outra busca ou categoria.</p></div>';
+                return;
+            }
+            grade.innerHTML = lista.map(p => `
+                <article class="product-card premium-card">
+                    <div class="product-thumb"><i data-lucide="${p.icone}"></i></div>
+                    <div class="product-body">
+                        <span class="product-cat">${CATEGORIAS[p.cat]}</span>
+                        <h3>${escapar(p.nome)}</h3>
+                        <p>${escapar(p.desc)}</p>
+                        <div class="product-price">${brl(p.preco)}</div>
+                        <button class="primary-btn" data-add="${p.id}"><i data-lucide="shopping-cart"></i> Adicionar</button>
+                    </div>
+                </article>`).join('');
+            grade.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+                adicionarAoCarrinho(b.dataset.add);
+                mostrarAviso(`${produtoPorId(b.dataset.add).nome} adicionado ao carrinho`);
+            }));
+            lucide.createIcons();
+        }
+        busca.addEventListener('input', desenharProdutos);
+        ordem.addEventListener('change', desenharProdutos);
+        desenharChips(); atualizarTitulo(); desenharProdutos();
+    </script>
+</body>
+</html>

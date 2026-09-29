@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha conta - FotoFerrara</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body class="animated-view">
+    <div id="site-header"></div>
+
+    <main class="page-container" id="areaConta"></main>
+
+    <div id="site-footer"></div>
+    <script src="assets/js/app.js"></script>
+    <script>
+        if (!estaLogado()) { location.href = 'Login - Fotoferrara.html?next=conta.html'; }
+        else if (ehAdmin()) { location.href = 'dashboard.html'; }
+        else {
+            const u = usuarioAtual(), e = u.endereco || {};
+            const linha = (r, v) => `<dt>${r}</dt><dd>${v ? escapar(v) : '<span style="color:var(--text-muted)">não informado</span>'}</dd>`;
+            const end = e.rua ? `${e.rua}, ${e.numero}${e.complemento ? ' - ' + e.complemento : ''} — ${e.bairro}, ${e.cidade}/${e.uf} — CEP ${e.cep}` : '';
+            const pedidos = lerJSON('pedidos', []).filter(p => p.email === u.email).reverse();
+            document.getElementById('areaConta').innerHTML = `
+                <div class="page-heading"><h1>Minha conta</h1><p>Seus dados de cadastro e histórico de compras.</p></div>
+                <div class="cart-layout">
+                    <section class="premium-card">
+                        <h3 style="margin-bottom:14px;color:var(--color-primary)">Meus pedidos</h3>
+                        ${pedidos.length ? pedidos.map(p => `
+                            <div class="order-card">
+                                <header><span>${p.id}</span><span>${brl(p.total)}</span></header>
+                                <p>${new Date(p.data).toLocaleDateString('pt-BR')} &middot; ${escapar(p.pagamento)}</p>
+                                <p>${p.itens.map(i => `${i.qtd}× ${escapar(i.nome)}`).join(', ')}</p>
+                            </div>`).join('')
+                          : '<div class="empty-state"><p>Você ainda não fez nenhum pedido.</p><a href="loja.html" class="primary-btn">Ir para a loja</a></div>'}
+                    </section>
+                    <aside class="premium-card">
+                        <h3 style="margin-bottom:14px;color:var(--color-primary)">Dados cadastrais</h3>
+                        <dl class="data-list">
+                            ${linha('Nome', u.nome)}${linha('E-mail', u.email)}${linha('Telefone', u.telefone)}
+                            ${linha('CPF', u.cpf)}${linha('Endereço', end)}
+                        </dl>
+                        <button class="outline-btn" id="sairConta" style="width:100%;margin-top:18px">Sair da conta</button>
+                    </aside>
+                </div>`;
+            document.getElementById('sairConta').onclick = sair;
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - FotoFerrara</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body class="animated-view">
+    <div id="site-header"></div>
+
+    <main class="page-container">
+        <div class="page-heading">
+            <h1>Carrinho de compras</h1>
+            <p>Revise seus itens e finalize a compra.</p>
+        </div>
+
+        <div id="conteudo"></div>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="assets/js/app.js"></script>
+    <script>
+        const conteudo = document.getElementById('conteudo');
+        let etapa = 'carrinho'; // carrinho -> entrega -> concluido
+        let pedidoFeito = null;
+
+        function desenhar() {
+            if (etapa === 'concluido') return desenharSucesso();
+            const itens = itensDoCarrinho();
+            if (!itens.length) {
+                conteudo.innerHTML = `<div class="empty-state premium-card" style="margin-top:24px">
+                    <h3>Seu carrinho está vazio</h3><p>Que tal dar uma olhada nos nossos produtos?</p>
+                    <a href="loja.html" class="primary-btn">Ir para a loja</a></div>`;
+                return;
+            }
+            const sub = subtotal(), fr = frete(sub), total = sub + fr;
+            conteudo.innerHTML = `
+            <div class="cart-layout">
+                <div>
+                    <div class="premium-card">
+                        ${itens.map(({ produto: p, qtd }) => `
+                        <div class="cart-item">
+                            <div class="product-thumb"><i data-lucide="${p.icone}"></i></div>
+                            <div class="cart-info">
+                                <strong>${escapar(p.nome)}</strong>
+                                <span>${brl(p.preco)} cada</span><br>
+                                <button class="link-remove" data-rem="${p.id}">Remover</button>
+                            </div>
+                            <div class="qty">
+                                <button data-menos="${p.id}" aria-label="Diminuir">−</button>
+                                <span>${qtd}</span>
+                                <button data-mais="${p.id}" aria-label="Aumentar">+</button>
+                            </div>
+                            <div class="cart-line-total">${brl(p.preco * qtd)}</div>
+                        </div>`).join('')}
+                    </div>
+                    ${etapa === 'entrega' ? formularioEntrega() : ''}
+                </div>
+                <aside class="premium-card summary-card">
+                    <h3 style="margin-bottom:10px;color:var(--color-primary)">Resumo</h3>
+                    <div class="summary-row"><span>Subtotal</span><span>${brl(sub)}</span></div>
+                    <div class="summary-row"><span>Frete</span><span>${fr === 0 ? 'Grátis' : brl(fr)}</span></div>
+                    <div class="summary-row total"><span>Total</span><span>${brl(total)}</span></div>
+                    <p class="summary-note">Frete grátis em compras acima de ${brl(FRETE_GRATIS_ACIMA)}.</p>
+                    ${etapa === 'carrinho'
+                        ? '<button class="primary-btn" id="btnFinalizar">Finalizar compra</button>'
+                        : '<button class="primary-btn" id="btnConfirmar">Confirmar pedido</button>'}
+                    <a href="loja.html" class="outline-btn" style="width:100%;margin-top:10px">Continuar comprando</a>
+                </aside>
+            </div>`;
+            ligarEventos();
+            lucide.createIcons();
+        }
+
+        function formularioEntrega() {
+            const u = usuarioAtual(), e = u.endereco || {};
+            const v = x => escapar(x || '');
+            return `
+            <form class="premium-card" id="formEntrega" style="margin-top:24px" novalidate>
+                <div class="form-grid">
+                    <h3 class="form-section-title">Entrega</h3>
+                    <div class="form-group col-4"><label for="eNome">Nome de quem recebe</label><input id="eNome" value="${v(u.nome)}" required></div>
+                    <div class="form-group col-2"><label for="eTel">Telefone</label><input id="eTel" value="${v(u.telefone)}" placeholder="(11) 99999-9999" required></div>
+                    <div class="form-group col-2"><label for="eCep">CEP</label><input id="eCep" value="${v(e.cep)}" placeholder="00000-000" maxlength="9" required></div>
+                    <div class="form-group col-4"><label for="eRua">Rua</label><input id="eRua" value="${v(e.rua)}" required></div>
+                    <div class="form-group col-2"><label for="eNum">Número</label><input id="eNum" value="${v(e.numero)}" required></div>
+                    <div class="form-group col-4"><label for="eComp">Complemento</label><input id="eComp" value="${v(e.complemento)}"></div>
+                    <div class="form-group col-3"><label for="eBairro">Bairro</label><input id="eBairro" value="${v(e.bairro)}" required></div>
+                    <div class="form-group col-3"><label for="eCidade">Cidade</label><input id="eCidade" value="${v(e.cidade)}" required></div>
+                    <div class="form-group col-2"><label for="eUf">UF</label><input id="eUf" value="${v(e.uf)}" maxlength="2" required></div>
+                    <h3 class="form-section-title">Pagamento</h3>
+                    <div class="col-6 radio-row">
+                        <label><input type="radio" name="pag" value="Pix" checked> Pix</label>
+                        <label><input type="radio" name="pag" value="Cartão de crédito"> Cartão de crédito</label>
+                        <label><input type="radio" name="pag" value="Boleto"> Boleto</label>
+                    </div>
+                </div>
+                <p class="summary-note">Pagamento simulado: nenhuma cobrança real é feita (projeto acadêmico).</p>
+            </form>`;
+        }
+
+        function ligarEventos() {
+            conteudo.querySelectorAll('[data-mais]').forEach(b => b.onclick = () => { definirQuantidade(b.dataset.mais, lerCarrinho()[b.dataset.mais] + 1); desenhar(); });
+            conteudo.querySelectorAll('[data-menos]').forEach(b => b.onclick = () => { definirQuantidade(b.dataset.menos, lerCarrinho()[b.dataset.menos] - 1); desenhar(); });
+            conteudo.querySelectorAll('[data-rem]').forEach(b => b.onclick = () => { definirQuantidade(b.dataset.rem, 0); desenhar(); });
+            const fin = document.getElementById('btnFinalizar');
+            if (fin) fin.onclick = () => {
+                if (!estaLogado()) { location.href = 'Login - Fotoferrara.html?next=carrinho.html'; return; }
+                etapa = 'entrega'; desenhar();
+                document.getElementById('formEntrega').scrollIntoView({ behavior: 'smooth' });
+            };
+            const conf = document.getElementById('btnConfirmar');
+            if (conf) conf.onclick = confirmarPedido;
+            const cep = document.getElementById('eCep');
+            if (cep) cep.addEventListener('blur', buscarCep);
+        }
+
+        async function buscarCep() {
+            const d = document.getElementById('eCep').value.replace(/\D/g, '');
+            if (d.length !== 8) return;
+            try {
+                const r = await fetch(`https://viacep.com.br/ws/${d}/json/`); const j = await r.json();
+                if (j.erro) return;
+                document.getElementById('eRua').value = j.logradouro || '';
+                document.getElementById('eBairro').value = j.bairro || '';
+                document.getElementById('eCidade').value = j.localidade || '';
+                document.getElementById('eUf').value = j.uf || '';
+            } catch (e) { /* sem internet: preencher à mão */ }
+        }
+
+        function confirmarPedido() {
+            const g = id => document.getElementById(id).value.trim();
+            const obrigatorios = ['eNome', 'eTel', 'eCep', 'eRua', 'eNum', 'eBairro', 'eCidade', 'eUf'];
+            if (obrigatorios.some(id => !g(id))) { mostrarAviso('Preencha todos os dados de entrega.'); return; }
+            const itens = itensDoCarrinho();
+            const sub = subtotal(), fr = frete(sub);
+            pedidoFeito = {
+                id: 'FF-' + Date.now().toString(36).toUpperCase(),
+                email: localStorage.getItem('userEmail'),
+                data: new Date().toISOString(),
+                itens: itens.map(i => ({ id: i.produto.id, nome: i.produto.nome, preco: i.produto.preco, qtd: i.qtd })),
+                subtotal: sub, frete: fr, total: sub + fr,
+                pagamento: document.querySelector('input[name=pag]:checked').value,
+                entrega: { nome: g('eNome'), telefone: g('eTel'), cep: g('eCep'), rua: g('eRua'), numero: g('eNum'),
+                           complemento: g('eComp'), bairro: g('eBairro'), cidade: g('eCidade'), uf: g('eUf').toUpperCase() }
+            };
+            const pedidos = lerJSON('pedidos', []); pedidos.push(pedidoFeito);
+            localStorage.setItem('pedidos', JSON.stringify(pedidos));
+            limparCarrinho();
+            etapa = 'concluido'; desenhar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function desenharSucesso() {
+            conteudo.innerHTML = `<div class="premium-card success-box" style="margin-top:24px">
+                <i data-lucide="check-circle"></i>
+                <h2>Pedido realizado!</h2>
+                <p>Número do pedido: <strong>${pedidoFeito.id}</strong> &middot; Total: <strong>${brl(pedidoFeito.total)}</strong></p>
+                <p style="color:var(--text-muted);margin:6px 0 20px">Pagamento: ${escapar(pedidoFeito.pagamento)}</p>
+                <a href="conta.html" class="primary-btn">Ver meus pedidos</a>
+                <a href="loja.html" class="outline-btn" style="margin-left:8px">Continuar comprando</a>
+            </div>`;
+            lucide.createIcons();
+        }
+
+        desenhar();
+    </script>
+</body>
+</html>

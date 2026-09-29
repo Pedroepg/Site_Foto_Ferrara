@@ -145,68 +145,64 @@
     </style>
 </head>
 <body class="animated-view">
-    <header class="site-header">
-        <a href="HomePage - Fotoferrara.html" class="logo">
-            <div class="logo-box"><i data-lucide="camera"></i></div>
-            <span class="logo-text">Foto<span>Ferrara</span></span>
-        </a>
-        <nav class="site-nav">
-            <a href="#">Impressões de fotos</a>
-            <a href="#">Molduras e Decoração</a>
-            <a href="#">Acessórios</a>
-            <a href="#">Foto-presentes</a>
-            <a href="Login - Fotoferrara.html" class="primary-btn">Entrar</a>
-        </nav>
-    </header>
+    <div id="site-header"></div>
 
     <section class="hero">
         <div class="hero-text">
             <h1>Capture Momentos Únicos</h1>
             <p>Libere a criatividade com fotos de alta qualidade. Capturando e revelando lindamente os momentos da sua vida.</p>
-            <a href="Cadastro - Fotoferrara.html" class="primary-btn">Cadastrar-se</a>
+            <a href="loja.html" class="primary-btn">Ver produtos</a>
+            <a href="Cadastro - Fotoferrara.html" class="outline-btn" style="margin-left:10px">Cadastrar-se</a>
         </div>
         <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008443820x352554530665626400/pexels-photo-185933.jpeg" alt="Fotos de polaroid dispostas sobre um mapa, representando lembranças de viagens">
     </section>
 
-    <div class="cta-banner">A loja número 1 de artigos fotográficos</div>
+    <a href="loja.html" class="cta-banner" style="text-decoration:none;display:block">A loja número 1 de artigos fotográficos — conheça nossos produtos</a>
 
     <section class="blog">
         <h2>Últimos artigos do blog</h2>
         <div class="blog-container">
-            <div class="blog-item premium-card">
+            <a class="blog-item premium-card" href="loja.html?cat=acessorios" style="text-decoration:none;color:inherit">
                 <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008702718x708996517043491100/pexels-photo-944382.jpeg" alt="Câmeras e acessórios antigos sobre uma mesa">
                 <h3>Capturando memórias: transformando momentos com nossos fundamentos fotográficos</h3>
                 <p>Explore as ferramentas da Foto Ferrara para dar vida aos seus momentos especiais.</p>
-            </div>
-            <div class="blog-item premium-card">
+            </a>
+            <a class="blog-item premium-card" href="loja.html?cat=molduras" style="text-decoration:none;color:inherit">
                 <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008605529x593834449729194800/pexels-photo-952590.jpeg" alt="Molduras com fotos artísticas decorando um ambiente">
                 <h3>A arte do enquadramento: transformando fotos do dia a dia em peças marcantes</h3>
                 <p>Descubra como a moldura certa pode transformar uma simples fotografia em uma obra de arte.</p>
-            </div>
-            <div class="blog-item premium-card">
+            </a>
+            <a class="blog-item premium-card" href="loja.html?cat=presentes" style="text-decoration:none;color:inherit">
                 <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008535625x643210802308502600/pexels-photo-1942489.jpeg" alt="Fotos impressas em molduras de diferentes estilos">
                 <h3>De pixels a impressões: transformando suas memórias com fotos-presentes personalizadas</h3>
                 <p>Descubra como transformar suas memórias digitais em impressões que geram lembranças preciosas.</p>
-            </div>
+            </a>
         </div>
     </section>
 
     <section class="newsletter">
         <h2>Junte-se à nossa família Foto Ferrara</h2>
         <p>Mantenha-se atualizado sobre nossos mais recentes equipamentos fotográficos e soluções de impressão.</p>
-        <form>
+        <form id="newsletterForm">
             <label for="newsletter-email" style="display:none;">E-mail</label>
             <input id="newsletter-email" type="email" placeholder="cliente@gmail.com" aria-label="E-mail para newsletter">
             <button type="submit">Inscrever-se</button>
         </form>
     </section>
 
-    <footer class="site-footer">
-        &copy; 2026 FotoFerrara - Todos os direitos reservados
-    </footer>
+    <div id="site-footer"></div>
 
+    <script src="assets/js/app.js"></script>
     <script>
-        lucide.createIcons();
+        document.getElementById('newsletterForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const campo = document.getElementById('newsletter-email');
+            const inscritos = JSON.parse(localStorage.getItem('newsletter') || '[]');
+            if (!inscritos.includes(campo.value)) inscritos.push(campo.value);
+            localStorage.setItem('newsletter', JSON.stringify(inscritos));
+            campo.value = '';
+            mostrarAviso('Inscrição realizada! Obrigado.');
+        });
     </script>
 </body>
 </html>

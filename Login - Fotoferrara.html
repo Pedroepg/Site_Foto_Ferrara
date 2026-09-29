@@ -87,21 +87,12 @@
     </style>
 </head>
 <body class="animated-view">
-    <header class="site-header">
-        <a href="HomePage - Fotoferrara.html" class="logo">
-            <div class="logo-box"><i data-lucide="camera"></i></div>
-            <span class="logo-text">Foto<span>Ferrara</span></span>
-        </a>
-        <nav class="site-nav">
-            <a href="HomePage - Fotoferrara.html">Home</a>
-            <a href="#">Ajuda</a>
-            <a href="Cadastro - Fotoferrara.html" class="primary-btn">Criar Conta</a>
-        </nav>
-    </header>
+    <div id="site-header"></div>
 
     <div class="auth-wrapper">
         <div class="auth-card premium-card">
             <h1>Entrar</h1>
+            <div class="notice" id="avisoNext" style="display:none">Entre na sua conta para continuar.</div>
             <p>Junte-se a outros entusiastas da fotografia agora!</p>
             <form id="loginForm" class="form">
                 <div class="form-group">
@@ -112,19 +103,18 @@
                     <label for="loginSenha">Senha</label>
                     <input type="password" id="loginSenha" placeholder="Senha" required>
                 </div>
-                <a href="#" class="forgot">Esqueceu sua senha?</a>
+                <a href="#" class="forgot" id="esqueceuSenha">Esqueceu sua senha?</a>
                 <button class="primary-btn" type="submit">Entrar</button>
             </form>
             <div class="register">
-                <p>Não tem uma conta? <a href="Cadastro - Fotoferrara.html">Criar Nova Conta</a></p>
+                <p>Não tem uma conta? <a href="Cadastro - Fotoferrara.html" id="linkCriarConta">Criar Nova Conta</a></p>
             </div>
         </div>
     </div>
 
-    <footer class="site-footer">
-        &copy; 2026 FotoFerrara - Todos os direitos reservados
-    </footer>
+    <div id="site-footer"></div>
 
+    <script src="assets/js/app.js"></script>
     <script src="Cadastro-Login_FotoFerrara.js"></script>
     <script>
         lucide.createIcons();

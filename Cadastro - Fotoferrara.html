@@ -26,7 +26,7 @@
 
         .auth-card {
             width: 100%;
-            max-width: 440px;
+            max-width: 760px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -74,53 +74,43 @@
     </style>
 </head>
 <body class="animated-view">
-    <header class="site-header">
-        <a href="HomePage - Fotoferrara.html" class="logo">
-            <div class="logo-box"><i data-lucide="camera"></i></div>
-            <span class="logo-text">Foto<span>Ferrara</span></span>
-        </a>
-        <nav class="site-nav">
-            <a href="#">Impressões de fotos</a>
-            <a href="#">Molduras e Decoração</a>
-            <a href="#">Acessórios</a>
-            <a href="#">Contate-nos</a>
-            <a href="Login - Fotoferrara.html" class="primary-btn">Minha Conta</a>
-        </nav>
-    </header>
+    <div id="site-header"></div>
 
     <div class="auth-wrapper">
         <div class="auth-card premium-card">
             <h1>Cadastre-se</h1>
             <p>Junte-se à comunidade de amantes da fotografia do FotoFerrara hoje mesmo!</p>
-            <form id="cadastroForm" class="form">
-                <div class="form-group">
-                    <label for="cadastroNome">Nome completo</label>
-                    <input type="text" id="cadastroNome" placeholder="Nome Completo" required>
-                </div>
-                <div class="form-group">
-                    <label for="cadastroEmail">E-mail</label>
-                    <input type="email" id="cadastroEmail" placeholder="Digite seu e-mail" required>
-                </div>
-                <div class="form-group">
-                    <label for="cadastroSenha">Senha</label>
-                    <input type="password" id="cadastroSenha" placeholder="Senha" required>
-                </div>
-                <div class="form-group">
-                    <label for="cadastroConfirmarSenha">Confirmar senha</label>
-                    <input type="password" id="cadastroConfirmarSenha" placeholder="Digite novamente a senha" required>
+            <form id="cadastroForm" class="form" novalidate>
+                <div class="form-grid">
+                    <h3 class="form-section-title">Dados pessoais</h3>
+                    <div class="form-group col-6"><label for="cadastroNome">Nome completo</label><input type="text" id="cadastroNome" placeholder="Nome Completo" required></div>
+                    <div class="form-group col-3"><label for="cadastroEmail">E-mail</label><input type="email" id="cadastroEmail" placeholder="Digite seu e-mail" required></div>
+                    <div class="form-group col-3"><label for="cadastroTelefone">Telefone</label><input type="tel" id="cadastroTelefone" placeholder="(11) 99999-9999" required></div>
+                    <div class="form-group col-3"><label for="cadastroCpf">CPF</label><input type="text" id="cadastroCpf" placeholder="000.000.000-00" required></div>
+                    <div class="form-group col-3"></div>
+                    <h3 class="form-section-title">Endereço de entrega</h3>
+                    <div class="form-group col-2"><label for="cadastroCep">CEP</label><input type="text" id="cadastroCep" placeholder="00000-000" required></div>
+                    <div class="form-group col-4"><label for="cadastroRua">Rua</label><input type="text" id="cadastroRua" required></div>
+                    <div class="form-group col-2"><label for="cadastroNumero">Número</label><input type="text" id="cadastroNumero" required></div>
+                    <div class="form-group col-4"><label for="cadastroComplemento">Complemento</label><input type="text" id="cadastroComplemento" placeholder="Apto, bloco... (opcional)"></div>
+                    <div class="form-group col-3"><label for="cadastroBairro">Bairro</label><input type="text" id="cadastroBairro" required></div>
+                    <div class="form-group col-3"><label for="cadastroCidade">Cidade</label><input type="text" id="cadastroCidade" required></div>
+                    <div class="form-group col-2"><label for="cadastroUf">UF</label><input type="text" id="cadastroUf" maxlength="2" placeholder="SP" required></div>
+                    <h3 class="form-section-title">Acesso</h3>
+                    <div class="form-group col-3"><label for="cadastroSenha">Senha (mín. 6 caracteres)</label><input type="password" id="cadastroSenha" placeholder="Senha" required></div>
+                    <div class="form-group col-3"><label for="cadastroConfirmarSenha">Confirmar senha</label><input type="password" id="cadastroConfirmarSenha" placeholder="Digite novamente a senha" required></div>
                 </div>
                 <button class="primary-btn" type="submit">Cadastrar-se</button>
             </form>
             <div class="login-link">
-                <p>Já tem uma conta? <a href="Login - Fotoferrara.html">Entrar</a></p>
+                <p>Já tem uma conta? <a href="Login - Fotoferrara.html" id="linkEntrar">Entrar</a></p>
             </div>
         </div>
     </div>
 
-    <footer class="site-footer">
-        &copy; 2026 FotoFerrara - Todos os direitos reservados
-    </footer>
+    <div id="site-footer"></div>
 
+    <script src="assets/js/app.js"></script>
     <script src="Cadastro-Login_FotoFerrara.js"></script>
     <script>
         lucide.createIcons();
