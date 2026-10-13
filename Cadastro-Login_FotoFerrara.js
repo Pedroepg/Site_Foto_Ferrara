@@ -6,6 +6,44 @@ function salvarUsuarios(users) {
     localStorage.setItem('usuarios', JSON.stringify(users));
 }
 
+async function hashSenha(senha) {
+    if (typeof senha !== 'string' || !senha.trim()) return '';
+
+    const cryptoApi = globalThis.crypto;
+    if (!cryptoApi || !cryptoApi.subtle) {
+        throw new Error('Web Crypto API indisponível neste ambiente.');
+    }
+
+    const encoder = new TextEncoder();
+    const dados = encoder.encode(senha);
+    const digest = await cryptoApi.subtle.digest('SHA-256', dados);
+    return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function senhaEhHash(senha) {
+    return typeof senha === 'string' && /^[a-f0-9]{64}$/.test(senha);
+}
+
+async function obterUsuariosComSenhaHash() {
+    const usuarios = obterUsuarios();
+    let alterou = false;
+
+    for (const email of Object.keys(usuarios)) {
+        const usuario = usuarios[email];
+        if (!usuario || typeof usuario !== 'object') continue;
+        if (typeof usuario.senha === 'string' && !senhaEhHash(usuario.senha)) {
+            usuario.senha = await hashSenha(usuario.senha);
+            alterou = true;
+        }
+    }
+
+    if (alterou) {
+        salvarUsuarios(usuarios);
+    }
+
+    return usuarios;
+}
+
 function validarEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -42,8 +80,10 @@ async function fazerLogin(email, senha) {
     if (!email || !senha) { alert("Preencha todos os campos!"); return; }
     if (!validarEmail(email)) { alert("Email inválido!"); return; }
 
+    const senhaHashInformada = await hashSenha(senha);
+
     // Conta de administrador padrão -> painel
-    if (email === "admin@fotoferrara.com" && senha === "senha123") {
+    if (email === "admin@fotoferrara.com" && senhaHashInformada === await hashSenha("senha123")) {
         localStorage.setItem('token', 'LOCAL-TOKEN-ADMIN');
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userName', 'Administrador');
@@ -51,8 +91,8 @@ async function fazerLogin(email, senha) {
         return;
     }
 
-    const usuarios = obterUsuarios();
-    if (usuarios[email] && usuarios[email].senha === senha) {
+    const usuarios = await obterUsuariosComSenhaHash();
+    if (usuarios[email] && usuarios[email].senha === senhaHashInformada) {
         localStorage.setItem('token', 'LOCAL-TOKEN-' + btoa(email));
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userName', usuarios[email].nome);
@@ -75,12 +115,12 @@ async function fazerCadastro(d) {
     if (d.senha.length < 6) { alert("A senha deve ter pelo menos 6 caracteres!"); return; }
     if (d.senha !== d.confirmarSenha) { alert("As senhas não conferem!"); return; }
 
-    const usuarios = obterUsuarios();
+    const usuarios = await obterUsuariosComSenhaHash();
     if (usuarios[d.email]) { alert("Este e-mail já está cadastrado!"); return; }
 
     usuarios[d.email] = {
         nome: d.nome,
-        senha: d.senha,
+        senha: await hashSenha(d.senha),
         telefone: d.telefone,
         cpf: d.cpf,
         endereco: {
