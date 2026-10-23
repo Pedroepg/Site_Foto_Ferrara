@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loja - FotoFerrara</title>
+    <title>Produtos - FotoFerrara</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,77 +15,167 @@
 
     <main class="page-container">
         <div class="page-heading">
-            <h1 id="tituloLoja">Loja</h1>
-            <p id="subtituloLoja">Tudo para capturar, revelar e decorar seus momentos.</p>
+            <h1 id="tituloLoja">Todos os produtos</h1>
+            <p>Produtos com preço fechado podem ser comprados pelo site. Os personalizados e os sob consulta são encomendados pelo WhatsApp.</p>
         </div>
 
-        <div class="store-toolbar">
-            <div class="chips" id="chips"></div>
-            <input type="search" id="busca" placeholder="Buscar produto..." aria-label="Buscar produto">
-            <select id="ordem" aria-label="Ordenar produtos">
-                <option value="nome">Nome (A–Z)</option>
-                <option value="menor">Menor preço</option>
-                <option value="maior">Maior preço</option>
-            </select>
-        </div>
+        <div class="store-layout">
+            <aside class="filter-panel premium-card" id="painelFiltros" aria-label="Filtros">
+                <div class="filter-head">
+                    <h3>Filtros</h3>
+                    <button type="button" class="link-btn" id="btnMostrarTudo">Mostrar tudo</button>
+                </div>
+                <div class="filter-group"><h4>Categorias</h4><div id="filtroCategorias"></div></div>
+                <div class="filter-group"><h4>Marcas</h4><div id="filtroMarcas"></div></div>
+                <div class="filter-group"><h4>Como comprar</h4><div id="filtroCompra"></div></div>
+            </aside>
 
-        <div class="product-grid" id="grade"></div>
+            <section>
+                <div class="store-toolbar">
+                    <button type="button" class="outline-btn filters-toggle" id="btnFiltros"><i data-lucide="sliders-horizontal"></i> Filtros</button>
+                    <input type="search" id="busca" placeholder="Buscar produto..." aria-label="Buscar produto">
+                    <select id="ordem" aria-label="Ordenar produtos">
+                        <option value="padrao">Ordem do catálogo</option>
+                        <option value="nome">Nome (A–Z)</option>
+                        <option value="menor">Menor preço</option>
+                        <option value="maior">Maior preço</option>
+                    </select>
+                </div>
+                <p class="result-count" id="contagem"></p>
+                <div class="product-grid" id="grade"></div>
+            </section>
+        </div>
     </main>
 
     <div id="site-footer"></div>
+    <script src="assets/js/catalogo.js"></script>
     <script src="assets/js/app.js"></script>
     <script>
         const params = new URLSearchParams(location.search);
-        let categoria = CATEGORIAS[params.get('cat')] ? params.get('cat') : 'todos';
+        // Nada marcado em um grupo = sem filtro nesse grupo (mostra tudo)
+        const estado = {
+            cats: new Set((params.get('cat') || '').split(',').filter(c => CATEGORIAS[c])),
+            marcas: new Set(),
+            compra: new Set()
+        };
         const busca = document.getElementById('busca');
         const ordem = document.getElementById('ordem');
+        const painel = document.getElementById('painelFiltros');
         busca.value = params.get('q') || '';
 
-        function desenharChips() {
-            const itens = [['todos', 'Todos'], ...Object.entries(CATEGORIAS)];
-            document.getElementById('chips').innerHTML = itens.map(([k, l]) =>
-                `<button class="chip ${k === categoria ? 'active' : ''}" data-cat="${k}" style="width:auto">${l}</button>`).join('');
-            document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
-                categoria = b.dataset.cat;
-                history.replaceState(null, '', categoria === 'todos' ? 'loja.html' : `loja.html?cat=${categoria}`);
-                desenharChips(); desenharProdutos(); atualizarTitulo();
-            }));
+        const marcas = [...new Set(PRODUTOS.map(p => p.marca).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        const contar = fn => PRODUTOS.filter(fn).length;
+
+        function opcao(grupo, valor, rotulo, qtd, marcado) {
+            return `<label class="filter-option"><input type="checkbox" data-grupo="${grupo}" value="${escapar(valor)}" ${marcado ? 'checked' : ''}>
+                <span>${escapar(rotulo)}</span><em>${qtd}</em></label>`;
         }
-        function atualizarTitulo() {
-            document.getElementById('tituloLoja').textContent = categoria === 'todos' ? 'Loja' : CATEGORIAS[categoria];
+
+        function desenharFiltros() {
+            document.getElementById('filtroCategorias').innerHTML = Object.entries(CATEGORIAS)
+                .map(([k, l]) => opcao('cats', k, l, contar(p => p.cat === k), estado.cats.has(k))).join('');
+            document.getElementById('filtroMarcas').innerHTML = marcas
+                .map(m => opcao('marcas', m, m, contar(p => p.marca === m), estado.marcas.has(m))).join('');
+            document.getElementById('filtroCompra').innerHTML =
+                opcao('compra', 'site', TIPOS_COMPRA.site, contar(compravelNoSite), estado.compra.has('site')) +
+                opcao('compra', 'whatsapp', TIPOS_COMPRA.whatsapp, contar(p => !compravelNoSite(p)), estado.compra.has('whatsapp'));
         }
-        function desenharProdutos() {
+
+        function filtrar() {
             const termo = busca.value.trim().toLowerCase();
-            let lista = PRODUTOS.filter(p => (categoria === 'todos' || p.cat === categoria) &&
-                (!termo || (p.nome + ' ' + p.desc).toLowerCase().includes(termo)));
-            if (ordem.value === 'menor') lista.sort((a, b) => a.preco - b.preco);
-            else if (ordem.value === 'maior') lista.sort((a, b) => b.preco - a.preco);
-            else lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
-            const grade = document.getElementById('grade');
-            if (!lista.length) {
-                grade.innerHTML = '<div class="empty-state premium-card" style="grid-column:1/-1"><h3>Nenhum produto encontrado</h3><p>Tente outra busca ou categoria.</p></div>';
-                return;
+            const lista = PRODUTOS.filter(p => {
+                if (estado.cats.size && !estado.cats.has(p.cat)) return false;
+                if (estado.marcas.size && !estado.marcas.has(p.marca)) return false;
+                if (estado.compra.size && !estado.compra.has(compravelNoSite(p) ? 'site' : 'whatsapp')) return false;
+                if (termo) {
+                    const alvo = `${p.nome} ${p.desc} ${p.marca || ''} ${CATEGORIAS[p.cat]}`.toLowerCase();
+                    if (!alvo.includes(termo)) return false;
+                }
+                return true;
+            });
+            const comPreco = p => typeof p.preco === 'number' && p.tipo !== 'consulta';
+            const porNome = (a, b) => a.nome.localeCompare(b.nome, 'pt-BR');
+            if (ordem.value === 'nome') lista.sort(porNome);
+            else if (ordem.value === 'menor' || ordem.value === 'maior') {
+                lista.sort((a, b) => {
+                    if (comPreco(a) !== comPreco(b)) return comPreco(a) ? -1 : 1;   // sem preço vai para o fim
+                    if (!comPreco(a)) return porNome(a, b);
+                    return ordem.value === 'menor' ? a.preco - b.preco : b.preco - a.preco;
+                });
             }
-            grade.innerHTML = lista.map(p => `
-                <article class="product-card premium-card">
-                    <div class="product-thumb"><i data-lucide="${p.icone}"></i></div>
-                    <div class="product-body">
-                        <span class="product-cat">${CATEGORIAS[p.cat]}</span>
-                        <h3>${escapar(p.nome)}</h3>
-                        <p>${escapar(p.desc)}</p>
-                        <div class="product-price">${brl(p.preco)}</div>
-                        <button class="primary-btn" data-add="${p.id}"><i data-lucide="shopping-cart"></i> Adicionar</button>
-                    </div>
-                </article>`).join('');
-            grade.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
-                adicionarAoCarrinho(b.dataset.add);
-                mostrarAviso(`${produtoPorId(b.dataset.add).nome} adicionado ao carrinho`);
-            }));
-            lucide.createIcons();
+            return lista;
         }
-        busca.addEventListener('input', desenharProdutos);
-        ordem.addEventListener('change', desenharProdutos);
-        desenharChips(); atualizarTitulo(); desenharProdutos();
+
+        function cartao(p) {
+            const comprar = compravelNoSite(p);
+            const classePreco = p.tipo === 'consulta' ? 'is-consulta' : (p.tipo === 'a-partir' ? 'is-from' : '');
+            const antigo = p.antigo ? `<span class="price-old">${brl(p.antigo)}</span>` : '';
+            const unidade = p.unidade ? `<span class="price-unit">${escapar(p.unidade)}</span>` : '';
+            const acao = comprar
+                ? `<button class="primary-btn" data-add="${p.id}"><i data-lucide="shopping-cart"></i> Adicionar</button>`
+                : `<a class="outline-btn" href="${linkWhatsApp(p)}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> ${p.tipo === 'consulta' ? 'Pedir orçamento' : 'Encomendar'}</a>`;
+            return `<article class="product-card premium-card">
+                <div class="product-thumb">${renderThumb(p)}</div>
+                <div class="product-body">
+                    <span class="product-cat">${escapar(CATEGORIAS[p.cat])}${p.marca ? ' · ' + escapar(p.marca) : ''}</span>
+                    <h3>${escapar(p.nome)}</h3>
+                    <p>${escapar(p.desc)}</p>
+                    <div class="product-price ${classePreco}">${escapar(precoTexto(p))}${unidade}${antigo}</div>
+                    ${acao}
+                </div>
+            </article>`;
+        }
+
+        function sincronizarURL() {
+            const q = new URLSearchParams();
+            if (estado.cats.size) q.set('cat', [...estado.cats].join(','));
+            if (busca.value.trim()) q.set('q', busca.value.trim());
+            const base = location.pathname.split('/').pop() || 'loja.html';
+            history.replaceState(null, '', base + (q.toString() ? '?' + q.toString().replace(/%2C/g, ',') : ''));
+        }
+
+        function desenhar() {
+            const lista = filtrar();
+            const n = estado.cats.size;
+            document.getElementById('tituloLoja').textContent =
+                n === 0 ? 'Todos os produtos' : n === 1 ? CATEGORIAS[[...estado.cats][0]] : 'Produtos selecionados';
+            const filtrado = estado.cats.size || estado.marcas.size || estado.compra.size || busca.value.trim();
+            document.getElementById('contagem').textContent =
+                `Mostrando ${lista.length} de ${PRODUTOS.length} produtos${filtrado ? ' (filtros ativos)' : ''}`;
+            const grade = document.getElementById('grade');
+            grade.innerHTML = lista.length ? lista.map(cartao).join('') :
+                `<div class="empty-state premium-card" style="grid-column:1/-1"><h3>Nenhum produto encontrado</h3>
+                 <p>Tente outra busca ou ajuste os filtros.</p><button class="primary-btn" id="limpar" style="width:auto">Mostrar tudo</button></div>`;
+            const limpar = document.getElementById('limpar');
+            if (limpar) limpar.onclick = mostrarTudo;
+            atualizarIcones();
+        }
+
+        function mostrarTudo() {
+            estado.cats.clear(); estado.marcas.clear(); estado.compra.clear(); busca.value = '';
+            desenharFiltros(); sincronizarURL(); desenhar();
+        }
+
+        painel.addEventListener('change', e => {
+            const i = e.target;
+            if (i.type !== 'checkbox') return;
+            const grupo = estado[i.dataset.grupo];
+            if (i.checked) grupo.add(i.value); else grupo.delete(i.value);
+            sincronizarURL(); desenhar();
+        });
+        document.getElementById('btnMostrarTudo').addEventListener('click', mostrarTudo);
+        document.getElementById('btnFiltros').addEventListener('click', () => painel.classList.toggle('open'));
+        document.getElementById('grade').addEventListener('click', e => {
+            const b = e.target.closest('[data-add]');
+            if (!b) return;
+            adicionarAoCarrinho(b.dataset.add);
+            mostrarAviso(`${produtoPorId(b.dataset.add).nome} adicionado ao carrinho`);
+        });
+        busca.addEventListener('input', () => { sincronizarURL(); desenhar(); });
+        ordem.addEventListener('change', desenhar);
+
+        desenharFiltros();
+        desenhar();
     </script>
 </body>
 </html>

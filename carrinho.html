@@ -23,6 +23,7 @@
     </main>
 
     <div id="site-footer"></div>
+    <script src="assets/js/catalogo.js"></script>
     <script src="assets/js/app.js"></script>
     <script>
         const conteudo = document.getElementById('conteudo');
@@ -45,7 +46,7 @@
                     <div class="premium-card">
                         ${itens.map(({ produto: p, qtd }) => `
                         <div class="cart-item">
-                            <div class="product-thumb"><i data-lucide="${p.icone}"></i></div>
+                            <div class="product-thumb">${renderThumb(p)}</div>
                             <div class="cart-info">
                                 <strong>${escapar(p.nome)}</strong>
                                 <span>${brl(p.preco)} cada</span><br>
@@ -74,7 +75,7 @@
                 </aside>
             </div>`;
             ligarEventos();
-            lucide.createIcons();
+            atualizarIcones();
         }
 
         function formularioEntrega() {
@@ -165,7 +166,7 @@
                 <a href="conta.html" class="primary-btn">Ver meus pedidos</a>
                 <a href="loja.html" class="outline-btn" style="margin-left:8px">Continuar comprando</a>
             </div>`;
-            lucide.createIcons();
+            atualizarIcones();
         }
 
         desenhar();

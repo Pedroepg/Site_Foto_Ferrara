@@ -83,6 +83,20 @@
             object-fit: cover;
             border-radius: var(--border-radius-md);
         }
+        .blog-thumb {
+            height: 190px; border-radius: var(--border-radius-md);
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--color-light-brown), var(--color-gold-light));
+            overflow: hidden; position: relative;
+        }
+        .blog-thumb img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: var(--transition);
+        }
+        .blog-item:hover .blog-thumb img {
+            transform: scale(1.05);
+        }
+        .blog-thumb svg { width: 84px; height: 84px; }
         .blog-item h3 {
             font-size: 17px;
             color: var(--color-primary);
@@ -162,20 +176,29 @@
     <section class="blog">
         <h2>Últimos artigos do blog</h2>
         <div class="blog-container">
-            <a class="blog-item premium-card" href="loja.html?cat=acessorios" style="text-decoration:none;color:inherit">
-                <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008702718x708996517043491100/pexels-photo-944382.jpeg" alt="Câmeras e acessórios antigos sobre uma mesa">
-                <h3>Capturando memórias: transformando momentos com nossos fundamentos fotográficos</h3>
-                <p>Explore as ferramentas da Foto Ferrara para dar vida aos seus momentos especiais.</p>
+            <a class="blog-item premium-card" href="loja.html?cat=revelacao,cameras" style="text-decoration:none;color:inherit">
+                <div class="blog-thumb" data-ilustracao="film-roll">
+                    <img src="assets/img/blog/blog-revelacao.jpg" alt="Revelação analógica" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                    <span class="thumb-fallback" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;"></span>
+                </div>
+                <h3>Revelação analógica: dê vida novamente aos seus filmes</h3>
+                <p>Revelamos os seus filmes em até 3 dias úteis. Conheça também as nossas câmeras e filmes.</p>
             </a>
-            <a class="blog-item premium-card" href="loja.html?cat=molduras" style="text-decoration:none;color:inherit">
-                <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008605529x593834449729194800/pexels-photo-952590.jpeg" alt="Molduras com fotos artísticas decorando um ambiente">
-                <h3>A arte do enquadramento: transformando fotos do dia a dia em peças marcantes</h3>
-                <p>Descubra como a moldura certa pode transformar uma simples fotografia em uma obra de arte.</p>
+            <a class="blog-item premium-card" href="loja.html?cat=relogios" style="text-decoration:none;color:inherit">
+                <div class="blog-thumb" data-ilustracao="watch">
+                    <img src="assets/img/blog/blog-relogios.jpg" alt="Relógios para todos os estilos" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                    <span class="thumb-fallback" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;"></span>
+                </div>
+                <h3>Relógios para todos os estilos: Casio, Champion, Orient, Seiko e Citizen</h3>
+                <p>Confira os modelos da nossa loja, com opções para presentear e para o dia a dia.</p>
             </a>
-            <a class="blog-item premium-card" href="loja.html?cat=presentes" style="text-decoration:none;color:inherit">
-                <img src="https://482df179509d84cd501c449e25d8b109.cdn.bubble.io/f1731008535625x643210802308502600/pexels-photo-1942489.jpeg" alt="Fotos impressas em molduras de diferentes estilos">
-                <h3>De pixels a impressões: transformando suas memórias com fotos-presentes personalizadas</h3>
-                <p>Descubra como transformar suas memórias digitais em impressões que geram lembranças preciosas.</p>
+            <a class="blog-item premium-card" href="loja.html?cat=canecas,presentes" style="text-decoration:none;color:inherit">
+                <div class="blog-thumb" data-ilustracao="coffee">
+                    <img src="assets/img/blog/blog-presentes.jpg" alt="Presentes que contam histórias" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                    <span class="thumb-fallback" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;"></span>
+                </div>
+                <h3>Presentes que contam histórias: canecas, chaveiros e camisetas com a sua foto</h3>
+                <p>Personalize do seu jeito: é só escolher o modelo e enviar as suas fotos pelo WhatsApp.</p>
             </a>
         </div>
     </section>
@@ -192,7 +215,15 @@
 
     <div id="site-footer"></div>
 
+    <script src="assets/js/catalogo.js"></script>
     <script src="assets/js/app.js"></script>
+    <script>
+        document.querySelectorAll('[data-ilustracao]').forEach(el => {
+            const fallback = el.querySelector('.thumb-fallback');
+            if (fallback) fallback.innerHTML = ILUSTRACOES[el.dataset.ilustracao] || '';
+            else el.innerHTML = ILUSTRACOES[el.dataset.ilustracao] || '';
+        });
+    </script>
     <script>
         document.getElementById('newsletterForm').addEventListener('submit', (e) => {
             e.preventDefault();

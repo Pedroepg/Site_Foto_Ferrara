@@ -6,6 +6,8 @@ function salvarUsuarios(users) {
     localStorage.setItem('usuarios', JSON.stringify(users));
 }
 
+// ── Segurança de Senha (hash SHA-256 via Web Crypto API) ──────────────────────
+// Implementado por João — commit: "Implementação de hash para as senhas salvas no site"
 async function hashSenha(senha) {
     if (typeof senha !== 'string' || !senha.trim()) return '';
 
@@ -43,6 +45,7 @@ async function obterUsuariosComSenhaHash() {
 
     return usuarios;
 }
+// ─────────────────────────────────────────────────────────────────────────────
 
 function validarEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -77,6 +80,7 @@ const maskCEP = v => v.slice(0, 8).replace(/^(\d{5})(\d)/, '$1-$2');
 
 // Login
 async function fazerLogin(email, senha) {
+    email = email.trim().toLowerCase();
     if (!email || !senha) { alert("Preencha todos os campos!"); return; }
     if (!validarEmail(email)) { alert("Email inválido!"); return; }
 
@@ -105,6 +109,7 @@ async function fazerLogin(email, senha) {
 
 // Cadastro com dados completos do cliente
 async function fazerCadastro(d) {
+    d.email = (d.email || '').trim().toLowerCase();
     const obrig = ['nome', 'email', 'telefone', 'cpf', 'senha', 'confirmarSenha', 'cep', 'rua', 'numero', 'bairro', 'cidade', 'uf'];
     if (obrig.some(k => !d[k])) { alert("Preencha todos os campos obrigatórios!"); return; }
     if (!validarEmail(d.email)) { alert("Email inválido!"); return; }
