@@ -11,11 +11,9 @@ const PAGINAS = {
     loja: 'loja.html',
     carrinho: 'carrinho.html',
     conta: 'conta.html',
-    painel: 'dashboard.html'
+    painel: 'dashboard.html',
+    impressao: 'impressao.html'
 };
-
-
-
 
 /* ---------- utilidades ---------- */
 function lerJSON(chave, padrao) {
@@ -44,19 +42,59 @@ function sair() {
 /* ---------- carrinho ---------- */
 function lerCarrinho() { return lerJSON('carrinho', {}); }
 function salvarCarrinho(c) { localStorage.setItem('carrinho', JSON.stringify(c)); atualizarBadge(); }
+
+function lerCarrinhoCustom() { return lerJSON('carrinho_custom', {}); }
+function salvarCarrinhoCustom(cc) { localStorage.setItem('carrinho_custom', JSON.stringify(cc)); atualizarBadge(); }
+
 function adicionarAoCarrinho(id, qtd = 1) {
     const c = lerCarrinho(); c[id] = (c[id] || 0) + qtd; salvarCarrinho(c);
 }
+
+function adicionarCustomAoCarrinho(id, itemData) {
+    const cc = lerCarrinhoCustom();
+    cc[id] = itemData; // { id, nome, desc, preco, qtd, thumb, detalhes }
+    salvarCarrinhoCustom(cc);
+    mostrarAviso('Pedido de impressão adicionado ao carrinho!');
+}
+
 function definirQuantidade(id, qtd) {
+    const cc = lerCarrinhoCustom();
+    if (cc[id]) {
+        if (qtd <= 0) delete cc[id];
+        else cc[id].qtd = qtd;
+        salvarCarrinhoCustom(cc);
+        return;
+    }
     const c = lerCarrinho();
     if (qtd <= 0) delete c[id]; else c[id] = qtd;
     salvarCarrinho(c);
 }
-function limparCarrinho() { salvarCarrinho({}); }
+
+function limparCarrinho() {
+    salvarCarrinho({});
+    salvarCarrinhoCustom({});
+}
+
 function itensDoCarrinho() {
     const c = lerCarrinho();
-    return Object.keys(c).map(id => ({ produto: produtoPorId(id), qtd: c[id] })).filter(i => i.produto);
+    const cc = lerCarrinhoCustom();
+    const normais = Object.keys(c).map(id => ({ produto: produtoPorId(id), qtd: c[id] })).filter(i => i.produto);
+    const custom = Object.keys(cc).map(id => ({
+        produto: {
+            id: id,
+            nome: cc[id].nome,
+            desc: cc[id].desc || '',
+            preco: Number(cc[id].preco),
+            imagem: cc[id].thumb,
+            icone: 'polaroid',
+            detalhes: cc[id].detalhes
+        },
+        qtd: cc[id].qtd || 1,
+        isCustom: true
+    }));
+    return [...normais, ...custom];
 }
+
 function subtotal() { return itensDoCarrinho().reduce((s, i) => s + i.produto.preco * i.qtd, 0); }
 function frete(sub) { return sub === 0 || sub >= FRETE_GRATIS_ACIMA ? 0 : FRETE_FIXO; }
 function totalItens() { return itensDoCarrinho().reduce((s, i) => s + i.qtd, 0); }
@@ -83,7 +121,8 @@ function montarCabecalho() {
         ...MENU.map(g => ({
             href: `${PAGINAS.loja}?cat=${g.cats.join(',')}`, label: g.label,
             ativo: naLoja && catsAtuais.length > 0 && catsAtuais.every(c => g.cats.includes(c))
-        }))
+        })),
+        { href: PAGINAS.impressao, label: 'Imprimir Fotos', destaque: true, ativo: pagina === PAGINAS.impressao }
     ];
     let conta;
     if (estaLogado()) {
@@ -103,7 +142,7 @@ function montarCabecalho() {
         </a>
         <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu"><i data-lucide="menu"></i></button>
         <nav class="site-nav" id="siteNav">
-            ${links.map(l => `<a href="${l.href}" class="${l.ativo ? 'active' : ''}">${l.label}</a>`).join('')}
+            ${links.map(l => `<a href="${l.href}" class="${l.ativo ? 'active' : ''} ${l.destaque ? 'nav-destaque' : ''}">${l.label}</a>`).join('')}
             <a href="${PAGINAS.carrinho}" class="cart-link ${pagina === PAGINAS.carrinho ? 'active' : ''}" aria-label="Carrinho">
                 <i data-lucide="shopping-cart"></i><span class="cart-badge" id="cartBadge">0</span>
             </a>
@@ -124,6 +163,7 @@ function montarRodape() {
         <div class="footer-links">
             <a href="${PAGINAS.home}">Início</a>
             ${MENU.map(g => `<a href="${PAGINAS.loja}?cat=${g.cats.join(',')}">${g.label}</a>`).join('')}
+            <a href="${PAGINAS.impressao}">Revelação & Impressão Online</a>
             <a href="${PAGINAS.carrinho}">Carrinho</a>
             <a href="${estaLogado() && !ehAdmin() ? PAGINAS.conta : PAGINAS.login}">Minha conta</a>
         </div>

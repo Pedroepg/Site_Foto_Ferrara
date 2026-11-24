@@ -488,6 +488,75 @@
             border-color: var(--color-accent);
         }
 
+        .chart-select {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--color-accent);
+            background-color: var(--color-light-brown);
+            color: var(--color-primary);
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .metrica-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .metrica-btn.active, .metrica-btn:hover {
+            background: var(--color-primary);
+            color: #fff;
+            border-color: var(--color-primary);
+        }
+
+        .mini-kpi-box {
+            background: var(--bg-cream);
+            padding: 12px 14px;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: var(--transition);
+        }
+        .mini-kpi-box:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 4px 12px rgba(89, 62, 48, 0.08);
+        }
+        .mini-kpi-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .mini-kpi-val {
+            font-size: 16px;
+            color: var(--color-primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+        .mini-kpi-tag {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         /* Recent Clients & Widgets Table */
         .data-section-grid {
             display: grid;
@@ -1015,17 +1084,81 @@
                     </div>
                 </div>
 
-                <!-- Charts row -->
+                <!-- Charts row com Botões Interativos de Desempenho Financeiro -->
                 <div class="dashboard-row">
                     <div class="chart-box">
-                        <div class="chart-title-block">
-                            <span class="chart-title">Desempenho Financeiro (Faturamento vs Despesas)</span>
-                            <div class="chart-actions">
-                                <button class="chart-tab-btn active">Mensal</button>
-                                <button class="chart-tab-btn">Trimestral</button>
+                        <div class="chart-title-block" style="flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+                            <div>
+                                <span class="chart-title" id="tituloDesempenhoFinanceiro">Desempenho Financeiro (Faturamento & Despesas)</span>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;" id="subtituloDesempenho">
+                                    Visualizando faturamento anual consolidado
+                                </div>
+                            </div>
+                            
+                            <!-- Botões de Período -->
+                            <div class="chart-actions" style="flex-wrap: wrap;">
+                                <button type="button" class="chart-tab-btn active" id="btnPeriodoAnual" onclick="filtrarPeriodoFinanceiro('anual')">
+                                    <i data-lucide="calendar" style="width:13px; vertical-align:middle; margin-right:2px;"></i> Anual
+                                </button>
+                                <button type="button" class="chart-tab-btn" id="btnPeriodoMensal" onclick="filtrarPeriodoFinanceiro('mensal')">
+                                    <i data-lucide="calendar-days" style="width:13px; vertical-align:middle; margin-right:2px;"></i> Mensal
+                                </button>
+                                <button type="button" class="chart-tab-btn" id="btnPeriodoTrimestral" onclick="filtrarPeriodoFinanceiro('trimestral')">
+                                    <i data-lucide="bar-chart-2" style="width:13px; vertical-align:middle; margin-right:2px;"></i> Trimestral
+                                </button>
+                                
+                                <!-- Seletor de Ano -->
+                                <select id="selectAnoFinanceiro" class="chart-select" onchange="alterarAnoFinanceiro(this.value)" style="display:none;">
+                                    <option value="2026" selected>Ano 2026</option>
+                                    <option value="2025">Ano 2025</option>
+                                    <option value="2024">Ano 2024</option>
+                                </select>
                             </div>
                         </div>
+
+                        <!-- Botões Interativos de Desempenho Financeiro (Métricas) -->
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+                            <button type="button" class="metrica-btn active" id="btnMetricaReceitaDespesa" onclick="filtrarMetricaFinanceira('receita-despesa')">
+                                <i data-lucide="arrow-left-right" style="width: 14px;"></i> Faturamento vs Despesas
+                            </button>
+                            <button type="button" class="metrica-btn" id="btnMetricaLucro" onclick="filtrarMetricaFinanceira('lucro')">
+                                <i data-lucide="trending-up" style="width: 14px; color: #2ec4b6;"></i> Lucro Líquido
+                            </button>
+                            <button type="button" class="metrica-btn" id="btnMetricaCategorias" onclick="filtrarMetricaFinanceira('categorias')">
+                                <i data-lucide="pie-chart" style="width: 14px; color: var(--color-gold);"></i> Por Categoria
+                            </button>
+                            <button type="button" class="metrica-btn" id="btnMetricaTicket" onclick="filtrarMetricaFinanceira('ticket')">
+                                <i data-lucide="tag" style="width: 14px; color: var(--color-accent);"></i> Ticket Médio
+                            </button>
+                        </div>
+
                         <div id="financeiroChart"></div>
+
+                        <!-- Mini Painel de Resumo do Período -->
+                        <div class="financial-summary-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                            <div class="mini-kpi-box">
+                                <span class="mini-kpi-label">Faturamento Período</span>
+                                <strong class="mini-kpi-val" id="miniFaturamentoTotal">R$ 384.500</strong>
+                                <span class="mini-kpi-tag" style="color: #2ec4b6;"><i data-lucide="trending-up" style="width:12px;"></i> +17.2% vs ant.</span>
+                            </div>
+                            <div class="mini-kpi-box">
+                                <span class="mini-kpi-label">Lucro Líquido</span>
+                                <strong class="mini-kpi-val" id="miniLucroLiquido">R$ 168.500</strong>
+                                <span class="mini-kpi-tag" id="miniMargemTag">Margem: 43.8%</span>
+                            </div>
+                            <div class="mini-kpi-box">
+                                <span class="mini-kpi-label">Meta Anual 2026</span>
+                                <strong class="mini-kpi-val">R$ 400.000</strong>
+                                <div class="progress-bar-bg" style="margin-top:4px; height:6px; background:#ebdcd0; border-radius:999px; overflow:hidden;">
+                                    <div class="progress-bar-fill" style="width:96.1%; height:100%; background:var(--color-gold);"></div>
+                                </div>
+                            </div>
+                            <div class="mini-kpi-box">
+                                <span class="mini-kpi-label">Ticket Médio</span>
+                                <strong class="mini-kpi-val" id="miniTicketMedio">R$ 138,30</strong>
+                                <span class="mini-kpi-tag" id="miniTransacoesTag" style="color:var(--color-primary); font-weight:600;">2.780 vendas</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="chart-box">
@@ -1332,8 +1465,75 @@
                     </div>
                 </div>
 
+                <!-- DRE Demonstrativo de Faturamento Anual Consolidado -->
+                <div class="premium-card" style="margin-bottom: 24px;">
+                    <div class="card-header-flex">
+                        <div>
+                            <span class="card-title">Demonstrativo de Faturamento Anual (DRE Consolidado)</span>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Comparativo histórico de receitas brutas, custos operacionais e margem líquida da Foto Ferrara.</p>
+                        </div>
+                        <button type="button" class="pill-button" onclick="alert('Exportando Demonstrativo Financeiro em PDF...')">
+                            <i data-lucide="download" style="width: 14px;"></i> Exportar DRE
+                        </button>
+                    </div>
+
+                    <div class="modern-table-container">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Exercício / Ano</th>
+                                    <th>Faturamento Bruto</th>
+                                    <th>Custos & Insumos</th>
+                                    <th>Despesas Operacionais</th>
+                                    <th>Lucro Líquido</th>
+                                    <th>Margem Líquida</th>
+                                    <th>Crescimento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: rgba(197, 160, 89, 0.08); font-weight: 600;">
+                                    <td><strong>2026 (Projetado / Atual)</strong></td>
+                                    <td style="color: var(--color-primary);">R$ 384.500,00</td>
+                                    <td>R$ 118.000,00</td>
+                                    <td>R$ 98.000,00</td>
+                                    <td style="color: #2ec4b6;">R$ 168.500,00</td>
+                                    <td><span class="status-badge status-completed">43,8%</span></td>
+                                    <td style="color: #2ec4b6;">+ 17,2%</td>
+                                </tr>
+                                <tr>
+                                    <td>2025</td>
+                                    <td>R$ 328.000,00</td>
+                                    <td>R$ 102.000,00</td>
+                                    <td>R$ 83.000,00</td>
+                                    <td style="color: #2ec4b6;">R$ 143.000,00</td>
+                                    <td><span class="status-badge status-completed">43,6%</span></td>
+                                    <td style="color: #2ec4b6;">+ 13,5%</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>R$ 289.000,00</td>
+                                    <td>R$ 91.000,00</td>
+                                    <td>R$ 74.000,00</td>
+                                    <td style="color: #2ec4b6;">R$ 124.000,00</td>
+                                    <td><span class="status-badge status-completed">42,9%</span></td>
+                                    <td style="color: #2ec4b6;">+ 18,0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>R$ 245.000,00</td>
+                                    <td>R$ 78.000,00</td>
+                                    <td>R$ 64.000,00</td>
+                                    <td style="color: #2ec4b6;">R$ 103.000,00</td>
+                                    <td><span class="status-badge status-completed">42,0%</span></td>
+                                    <td>Base Inicial</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="premium-card">
-                    <span class="card-title" style="margin-bottom: 20px; display: block;">Transações Recentes</span>
+                    <span class="card-title" style="margin-bottom: 20px; display: block;">Transações Recentes & Entradas de Impressão Online</span>
                     <div class="modern-table-container">
                         <table class="modern-table">
                             <thead>
@@ -1347,10 +1547,31 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td><strong>Pedido Impressão Online #1042</strong> (35 fotos 10x15)</td>
+                                    <td>Revelação Online</td>
+                                    <td>26/05/2026</td>
+                                    <td style="color: #2ec4b6; font-weight: 600;">+ R$ 87,50</td>
+                                    <td><span class="status-badge status-completed">Entrada</span></td>
+                                </tr>
+                                <tr>
                                     <td>Ensaio Newborn - Alice Silva</td>
                                     <td>Serviços</td>
                                     <td>26/05/2026</td>
                                     <td style="color: #2ec4b6; font-weight: 600;">+ R$ 850,00</td>
+                                    <td><span class="status-badge status-completed">Entrada</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Bobina Papel Fotográfico Glossy 260g (Fuji)</td>
+                                    <td>Insumos Laboratório</td>
+                                    <td>24/05/2026</td>
+                                    <td style="color: #c62828; font-weight: 600;">- R$ 480,00</td>
+                                    <td><span class="status-badge status-canceled">Saída</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Pedido Impressão Online #1041</strong> (12 fotos Polaroid)</td>
+                                    <td>Revelação Online</td>
+                                    <td>23/05/2026</td>
+                                    <td style="color: #2ec4b6; font-weight: 600;">+ R$ 36,00</td>
                                     <td><span class="status-badge status-completed">Entrada</span></td>
                                 </tr>
                                 <tr>
@@ -1636,61 +1857,295 @@
             loadProductGallery(data.total_produtos);
         }
 
-        // Render ApexChart - Financeiro
-        function renderFinanceiroChart(chartData) {
-            const options = {
-                series: [{
-                    name: 'Receita',
-                    data: chartData.receitas
-                }, {
-                    name: 'Despesas',
-                    data: chartData.despesas
-                }],
-                chart: {
-                    type: 'area',
-                    height: 320,
-                    toolbar: { show: false },
-                    fontFamily: 'Inter, sans-serif'
+        // Global chart instance
+        let chartFinanceiroInstancia = null;
+
+        // Base de Dados Completa de Desempenho Financeiro (Anual, Mensal, Trimestral)
+        const DADOS_FINANCEIROS = {
+            periodoAtual: 'anual', // 'anual' | 'mensal' | 'trimestral'
+            anoAtual: '2026',
+            metricaAtual: 'receita-despesa', // 'receita-despesa' | 'lucro' | 'categorias' | 'ticket'
+            
+            // Dados Anuais Consolidados (2023 - 2026)
+            anual: {
+                labels: ['2023', '2024', '2025', '2026 (Atual)'],
+                receitas: [245000, 289000, 328000, 384500],
+                despesas: [142000, 165000, 185000, 216000],
+                lucro: [103000, 124000, 143000, 168500],
+                tickets: [134.60, 134.40, 136.10, 138.30],
+                transacoes: [1820, 2150, 2410, 2780],
+                totalAnoAtual: 384500,
+                lucroAnoAtual: 168500,
+                categorias: {
+                    labels: ['Relógios & Jóias', 'Revelação & Impressão Online', 'Câmeras & Filmes', 'Presentes & Brindes', 'Serviços Técnicos'],
+                    series: [130730, 107660, 69210, 46140, 30760]
+                }
+            },
+
+            // Dados Mensais por Ano (12 meses)
+            mensal: {
+                '2026': {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    receitas: [28500, 29200, 31000, 33500, 35800, 32400, 34100, 36200, 37500, 42000, 48500, 52800],
+                    despesas: [16200, 16800, 17500, 18200, 19100, 18400, 18900, 19800, 20500, 22400, 24100, 26000],
+                    transacoes: 342,
+                    ticketMedio: 141.80
                 },
-                colors: ['#a16644', '#c5a059'], // Accent, Gold
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.35,
-                        opacityTo: 0.05,
-                        stops: [0, 90, 100]
+                '2025': {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    receitas: [22000, 23500, 25000, 26800, 28000, 27200, 28500, 29400, 30100, 32500, 36000, 39000],
+                    despesas: [13000, 13800, 14500, 15200, 15900, 15400, 16000, 16600, 17100, 18200, 19800, 21500],
+                    transacoes: 285,
+                    ticketMedio: 136.10
+                },
+                '2024': {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    receitas: [18500, 19800, 21200, 22600, 24000, 23100, 24500, 25800, 26900, 28500, 32000, 35000],
+                    despesas: [11200, 11900, 12600, 13400, 14100, 13800, 14300, 15000, 15600, 16400, 17800, 19200],
+                    transacoes: 240,
+                    ticketMedio: 134.40
+                }
+            },
+
+            // Dados Trimestrais por Ano
+            trimestral: {
+                '2026': {
+                    labels: ['1º Trim (Jan-Mar)', '2º Trim (Abr-Jun)', '3º Trim (Jul-Set)', '4º Trim (Out-Dez)'],
+                    receitas: [88700, 101700, 107800, 143300],
+                    despesas: [50500, 55700, 59200, 72500]
+                },
+                '2025': {
+                    labels: ['1º Trim (Jan-Mar)', '2º Trim (Abr-Jun)', '3º Trim (Jul-Set)', '4º Trim (Out-Dez)'],
+                    receitas: [70500, 82000, 88000, 107500],
+                    despesas: [41300, 46500, 49700, 59500]
+                },
+                '2024': {
+                    labels: ['1º Trim (Jan-Mar)', '2º Trim (Abr-Jun)', '3º Trim (Jul-Set)', '4º Trim (Out-Dez)'],
+                    receitas: [59500, 69700, 77200, 95500],
+                    despesas: [35700, 41300, 44900, 53400]
+                }
+            }
+        };
+
+        // Render ApexChart - Financeiro com suporte padronizado a Gráfico de Barras
+        function renderFinanceiroChart() {
+            const chartEl = document.querySelector("#financeiroChart");
+            if (!chartEl) return;
+
+            const baseOptions = {
+                chart: {
+                    type: 'bar',
+                    height: 330,
+                    toolbar: { show: false },
+                    fontFamily: 'Inter, sans-serif',
+                    animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 500
                     }
                 },
+                colors: ['#593e30', '#c5a059'],
+                series: [],
                 dataLabels: { enabled: false },
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
+                plotOptions: {
+                    bar: {
+                        borderRadius: 5,
+                        columnWidth: '50%'
+                    }
                 },
-                xaxis: {
-                    categories: chartData.labels,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
+                stroke: { show: false },
+                grid: { borderColor: '#ebdcd0', strokeDashArray: 4 },
+                legend: { position: 'top', horizontalAlign: 'right' }
+            };
+
+            chartFinanceiroInstancia = new ApexCharts(chartEl, baseOptions);
+            chartFinanceiroInstancia.render();
+            atualizarGraficoFinanceiro();
+        }
+
+        // Troca de Período Financeiro (Anual, Mensal, Trimestral)
+        function filtrarPeriodoFinanceiro(periodo) {
+            DADOS_FINANCEIROS.periodoAtual = periodo;
+            
+            // Atualiza botões
+            document.getElementById('btnPeriodoAnual').classList.toggle('active', periodo === 'anual');
+            document.getElementById('btnPeriodoMensal').classList.toggle('active', periodo === 'mensal');
+            document.getElementById('btnPeriodoTrimestral').classList.toggle('active', periodo === 'trimestral');
+            
+            // Seletor de Ano só é necessário quando Mensal ou Trimestral
+            const selectAno = document.getElementById('selectAnoFinanceiro');
+            if (selectAno) {
+                selectAno.style.display = (periodo === 'mensal' || periodo === 'trimestral') ? 'inline-block' : 'none';
+            }
+
+            atualizarGraficoFinanceiro();
+        }
+
+        // Alteração do Ano no filtro
+        function alterarAnoFinanceiro(ano) {
+            DADOS_FINANCEIROS.anoAtual = ano;
+            atualizarGraficoFinanceiro();
+        }
+
+        // Troca da Métrica de Desempenho
+        function filtrarMetricaFinanceira(metrica) {
+            DADOS_FINANCEIROS.metricaAtual = metrica;
+            
+            // Atualiza botões
+            document.getElementById('btnMetricaReceitaDespesa').classList.toggle('active', metrica === 'receita-despesa');
+            document.getElementById('btnMetricaLucro').classList.toggle('active', metrica === 'lucro');
+            document.getElementById('btnMetricaCategorias').classList.toggle('active', metrica === 'categorias');
+            document.getElementById('btnMetricaTicket').classList.toggle('active', metrica === 'ticket');
+
+            atualizarGraficoFinanceiro();
+        }
+
+        // Atualização em Tempo Real do Gráfico Padronizado em Barras
+        function atualizarGraficoFinanceiro() {
+            if (!chartFinanceiroInstancia) return;
+
+            const periodo = DADOS_FINANCEIROS.periodoAtual;
+            const ano = DADOS_FINANCEIROS.anoAtual;
+            const metrica = DADOS_FINANCEIROS.metricaAtual;
+
+            let labels = [];
+            let series = [];
+            const chartType = 'bar'; // Padronizado em gráfico de barra conforme solicitado
+            let colors = ['#593e30', '#c5a059'];
+            let subtitulo = '';
+            let faturamentoTotal = 0;
+            let lucroLiquido = 0;
+            let ticketMedio = 0;
+            let transacoesQtd = 0;
+
+            if (periodo === 'anual') {
+                const dados = DADOS_FINANCEIROS.anual;
+                labels = dados.labels;
+                subtitulo = 'Visualizando Faturamento Anual Consolidado (2023 - 2026)';
+                faturamentoTotal = dados.totalAnoAtual;
+                lucroLiquido = dados.lucroAnoAtual;
+                ticketMedio = dados.tickets[dados.tickets.length - 1];
+                transacoesQtd = dados.transacoes[dados.transacoes.length - 1];
+
+                if (metrica === 'receita-despesa') {
+                    series = [
+                        { name: 'Faturamento Anual', data: dados.receitas },
+                        { name: 'Despesas Anuais', data: dados.despesas }
+                    ];
+                    colors = ['#593e30', '#c5a059'];
+                } else if (metrica === 'lucro') {
+                    series = [{ name: 'Lucro Líquido Anual', data: dados.lucro }];
+                    colors = ['#2ec4b6'];
+                } else if (metrica === 'categorias') {
+                    series = [{ name: 'Faturamento por Categoria (2026)', data: dados.categorias.series }];
+                    labels = dados.categorias.labels;
+                    colors = ['#a16644'];
+                } else if (metrica === 'ticket') {
+                    series = [{ name: 'Ticket Médio (R$)', data: dados.tickets }];
+                    colors = ['#c5a059'];
+                }
+            } else if (periodo === 'mensal') {
+                const dadosAno = DADOS_FINANCEIROS.mensal[ano] || DADOS_FINANCEIROS.mensal['2026'];
+                labels = dadosAno.labels;
+                subtitulo = `Visualizando Faturamento Mensal - Exercício ${ano} (Jan a Dez)`;
+                
+                faturamentoTotal = dadosAno.receitas.reduce((a, b) => a + b, 0);
+                const despesasTotais = dadosAno.despesas.reduce((a, b) => a + b, 0);
+                lucroLiquido = faturamentoTotal - despesasTotais;
+                ticketMedio = dadosAno.ticketMedio;
+                transacoesQtd = dadosAno.transacoes;
+
+                if (metrica === 'receita-despesa') {
+                    series = [
+                        { name: 'Receita Mensal', data: dadosAno.receitas },
+                        { name: 'Despesas do Mês', data: dadosAno.despesas }
+                    ];
+                    colors = ['#593e30', '#c5a059'];
+                } else if (metrica === 'lucro') {
+                    const lucrosMensais = dadosAno.receitas.map((r, i) => r - dadosAno.despesas[i]);
+                    series = [{ name: 'Lucro Líquido Mensal', data: lucrosMensais }];
+                    colors = ['#2ec4b6'];
+                } else if (metrica === 'categorias') {
+                    const cat = DADOS_FINANCEIROS.anual.categorias;
+                    labels = cat.labels;
+                    series = [{ name: `Faturamento por Categoria (${ano})`, data: cat.series.map(v => Math.round(v * (ano === '2026' ? 1 : 0.85))) }];
+                    colors = ['#593e30'];
+                } else if (metrica === 'ticket') {
+                    const ticketsMensais = dadosAno.receitas.map(r => Number((r / (dadosAno.transacoes / 12)).toFixed(2)));
+                    series = [{ name: 'Ticket Médio Mensal (R$)', data: ticketsMensais }];
+                    colors = ['#c5a059'];
+                }
+            } else if (periodo === 'trimestral') {
+                const dadosTri = DADOS_FINANCEIROS.trimestral[ano] || DADOS_FINANCEIROS.trimestral['2026'];
+                labels = dadosTri.labels;
+                subtitulo = `Visualizando Faturamento Trimestral - Exercício ${ano} (Q1 a Q4)`;
+
+                faturamentoTotal = dadosTri.receitas.reduce((a, b) => a + b, 0);
+                const despesasTotais = dadosTri.despesas.reduce((a, b) => a + b, 0);
+                lucroLiquido = faturamentoTotal - despesasTotais;
+                ticketMedio = 142.50;
+                transacoesQtd = ano === '2026' ? 2780 : 2410;
+
+                if (metrica === 'receita-despesa') {
+                    series = [
+                        { name: 'Receita Trimestral', data: dadosTri.receitas },
+                        { name: 'Despesas Trimestrais', data: dadosTri.despesas }
+                    ];
+                    colors = ['#593e30', '#c5a059'];
+                } else if (metrica === 'lucro') {
+                    const lucrosTri = dadosTri.receitas.map((r, i) => r - dadosTri.despesas[i]);
+                    series = [{ name: 'Lucro Trimestral', data: lucrosTri }];
+                    colors = ['#2ec4b6'];
+                } else if (metrica === 'categorias') {
+                    const cat = DADOS_FINANCEIROS.anual.categorias;
+                    labels = cat.labels;
+                    series = [{ name: `Faturamento por Categoria (${ano})`, data: cat.series }];
+                    colors = ['#a16644'];
+                } else if (metrica === 'ticket') {
+                    series = [{ name: 'Ticket Médio Trimestral (R$)', data: [136.20, 140.50, 142.80, 150.40] }];
+                    colors = ['#c5a059'];
+                }
+            }
+
+            // Atualiza Textos no DOM
+            document.getElementById('subtituloDesempenho').textContent = subtitulo;
+            document.getElementById('cardFaturamento').textContent = 'R$ ' + faturamentoTotal.toLocaleString('pt-BR');
+            document.getElementById('miniFaturamentoTotal').textContent = 'R$ ' + faturamentoTotal.toLocaleString('pt-BR');
+            document.getElementById('miniLucroLiquido').textContent = 'R$ ' + lucroLiquido.toLocaleString('pt-BR');
+            
+            const margem = ((lucroLiquido / faturamentoTotal) * 100).toFixed(1);
+            document.getElementById('miniMargemTag').textContent = `Margem: ${margem}%`;
+            document.getElementById('miniTicketMedio').textContent = 'R$ ' + Number(ticketMedio).toFixed(2).replace('.', ',');
+            document.getElementById('miniTransacoesTag').textContent = `${transacoesQtd} pedidos`;
+
+            // Atualiza Opções do Gráfico Padronizado em Barras
+            chartFinanceiroInstancia.updateOptions({
+                chart: { type: 'bar' },
+                colors: colors,
+                xaxis: { categories: labels },
+                series: series,
+                plotOptions: {
+                    bar: {
+                        borderRadius: 5,
+                        columnWidth: periodo === 'mensal' ? '60%' : '45%',
+                        horizontal: false
+                    }
+                },
+                fill: {
+                    type: 'solid',
+                    opacity: 0.95
+                },
+                stroke: {
+                    show: false
                 },
                 yaxis: {
                     labels: {
                         formatter: function (value) {
-                            return "R$ " + value.toLocaleString('pt-BR');
+                            return "R$ " + Number(value).toLocaleString('pt-BR');
                         }
                     }
-                },
-                grid: {
-                    borderColor: '#ebdcd0',
-                    strokeDashArray: 4
-                },
-                legend: {
-                    position: 'top',
-                    horizontalAlign: 'right'
                 }
-            };
-
-            const chart = new ApexCharts(document.querySelector("#financeiroChart"), options);
-            chart.render();
+            });
         }
 
         // Render ApexChart - Vendedores (PostgreSQL)

@@ -111,9 +111,14 @@
             const classePreco = p.tipo === 'consulta' ? 'is-consulta' : (p.tipo === 'a-partir' ? 'is-from' : '');
             const antigo = p.antigo ? `<span class="price-old">${brl(p.antigo)}</span>` : '';
             const unidade = p.unidade ? `<span class="price-unit">${escapar(p.unidade)}</span>` : '';
-            const acao = comprar
-                ? `<button class="primary-btn" data-add="${p.id}"><i data-lucide="shopping-cart"></i> Adicionar</button>`
-                : `<a class="outline-btn" href="${linkWhatsApp(p)}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> ${p.tipo === 'consulta' ? 'Pedir orçamento' : 'Encomendar'}</a>`;
+            let acao;
+            if (p.id === 'revelacao-fotos') {
+                acao = `<a class="primary-btn" href="impressao.html" style="background-color: var(--color-gold); color: var(--bg-sidebar) !important; width:100%;"><i data-lucide="image-plus"></i> Enviar fotos online</a>`;
+            } else if (comprar) {
+                acao = `<button class="primary-btn" data-add="${p.id}"><i data-lucide="shopping-cart"></i> Adicionar</button>`;
+            } else {
+                acao = `<a class="outline-btn" href="${linkWhatsApp(p)}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> ${p.tipo === 'consulta' ? 'Pedir orçamento' : 'Encomendar'}</a>`;
+            }
             return `<article class="product-card premium-card">
                 <div class="product-thumb">${renderThumb(p)}</div>
                 <div class="product-body">

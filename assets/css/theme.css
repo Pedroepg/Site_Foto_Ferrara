@@ -147,6 +147,19 @@ img {
     color: var(--color-accent);
 }
 
+.site-nav a.nav-destaque {
+    background: var(--color-gold-light);
+    color: var(--color-primary);
+    font-weight: 600;
+    border: 1px solid rgba(197, 160, 89, 0.45);
+}
+
+.site-nav a.nav-destaque:hover {
+    background: var(--color-gold);
+    color: #fff;
+    border-color: var(--color-gold);
+}
+
 /* =========================================================
    Buttons
    ========================================================= */

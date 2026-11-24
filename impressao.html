@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revelação & Impressão de Fotos Online - FotoFerrara</title>
+    
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Design System Compartilhado -->
+    <link rel="stylesheet" href="assets/css/theme.css">
+
+    <style>
+        .impressao-hero {
+            background: linear-gradient(135deg, rgba(89, 62, 48, 0.05), rgba(197, 160, 89, 0.12));
+            border-bottom: 1px solid var(--border-color);
+            padding: 45px 24px 35px;
+            text-align: center;
+        }
+        .impressao-hero h1 {
+            font-size: 36px;
+            color: var(--color-primary);
+            margin-bottom: 12px;
+        }
+        .impressao-hero p {
+            max-width: 680px;
+            margin: 0 auto;
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 30px;
+            margin-top: 30px;
+            align-items: start;
+        }
+
+        /* Dropzone */
+        .dropzone-box {
+            border: 2px dashed var(--color-gold);
+            background: #fff;
+            border-radius: var(--border-radius-lg);
+            padding: 40px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-subtle);
+            position: relative;
+        }
+        .dropzone-box:hover, .dropzone-box.dragover {
+            border-color: var(--color-accent);
+            background: rgba(197, 160, 89, 0.06);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        .dropzone-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: var(--color-gold-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primary);
+        }
+        .dropzone-box h3 {
+            font-size: 20px;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+        .dropzone-box p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+        .dropzone-box input[type="file"] {
+            display: none;
+        }
+
+        /* Batch Controls */
+        .batch-panel {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            margin-top: 24px;
+            box-shadow: var(--shadow-subtle);
+        }
+        .batch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .batch-header h4 {
+            font-size: 15px;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .batch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .batch-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .batch-group select, .batch-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--border-color);
+            background: var(--bg-cream);
+            font-size: 13px;
+        }
+
+        /* Photo List Grid */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 18px;
+            margin-top: 24px;
+        }
+        .photo-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 14px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            transition: var(--transition);
+        }
+        .photo-card:hover {
+            box-shadow: var(--shadow-premium);
+            border-color: var(--color-accent);
+        }
+        .photo-preview-wrap {
+            width: 100%;
+            height: 190px;
+            background: #2b201a08;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .photo-preview-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        .photo-preview-wrap.border-white img {
+            border: 8px solid #fff;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+        }
+        .photo-card-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 6px;
+            z-index: 2;
+        }
+        .btn-mini-action {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #c62828;
+            transition: var(--transition);
+        }
+        .btn-mini-action:hover {
+            background: #c62828;
+            color: #fff;
+            transform: scale(1.08);
+        }
+        .photo-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .photo-controls-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .photo-controls-row label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .photo-controls-row select {
+            width: 100%;
+            padding: 6px 8px;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-cream);
+        }
+        .qty-stepper {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            background: var(--bg-cream);
+        }
+        .qty-stepper button {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primary);
+        }
+        .qty-stepper button:hover {
+            background: var(--color-gold-light);
+        }
+        .qty-stepper span {
+            flex: 1;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .photo-line-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+        .photo-line-total strong {
+            font-size: 15px;
+            color: var(--color-primary);
+        }
+
+        /* Summary Sidebar */
+        .summary-sticky {
+            position: sticky;
+            top: 90px;
+        }
+        .discount-badge {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-accent));
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: var(--border-radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .discount-progress {
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .progress-bar-bg {
+            height: 8px;
+            background: var(--color-light-brown);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--color-gold);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .price-table-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            margin-top: 24px;
+        }
+        .price-table-card h4 {
+            font-size: 15px;
+            color: var(--color-primary);
+            margin-bottom: 12px;
+        }
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .price-item:last-child {
+            border-bottom: none;
+        }
+        .price-item strong {
+            color: var(--color-accent);
+        }
+
+        .faq-section {
+            margin-top: 60px;
+            padding: 40px;
+            background: #fff;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--border-color);
+        }
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .faq-card h4 {
+            font-size: 16px;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .faq-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+            .summary-sticky {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body class="animated-view">
+    <div id="site-header"></div>
+
+    <section class="impressao-hero">
+        <div class="page-container" style="max-width: 900px;">
+            <h1>Revelação & Impressão de Fotos Online</h1>
+            <p>Envie suas fotos direto do celular ou computador. Escolha o tamanho ideal, o acabamento do papel e a quantidade de cópias. Cuidamos de cada detalhe com a tradição e qualidade do laboratório Foto Ferrara.</p>
+        </div>
+    </section>
+
+    <main class="page-container" style="max-width: 1200px; padding-bottom: 60px;">
+        <div class="upload-section">
+            
+            <!-- Coluna Principal: Upload e Gerenciador de Fotos -->
+            <div>
+                <!-- Dropzone Box -->
+                <div class="dropzone-box" id="dropzone">
+                    <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp,image/jpg">
+                    <div class="dropzone-icon">
+                        <i data-lucide="cloud-upload" style="width: 32px; height: 32px;"></i>
+                    </div>
+                    <h3>Arraste suas fotos aqui ou clique para selecionar</h3>
+                    <p>Suporta múltiplos arquivos em JPG, PNG ou WebP. Fotos do celular, WhatsApp ou câmera digital.</p>
+                    <button type="button" class="primary-btn" id="btnSelectFiles" style="width: auto; margin: 0 auto;">
+                        <i data-lucide="image-plus" style="width: 18px;"></i> Selecionar Fotos do Dispositivo
+                    </button>
+                </div>
+
+                <!-- Painel de Configuração Rápida em Lote (Batch) -->
+                <div class="batch-panel" id="batchPanel" style="display: none;">
+                    <div class="batch-header">
+                        <h4><i data-lucide="sliders" style="width: 18px; color: var(--color-gold);"></i> Configurar todas as fotos de uma vez:</h4>
+                        <button type="button" class="outline-btn" id="btnApplyAll" style="width: auto; padding: 6px 14px; font-size: 13px;">
+                            Aplicar a Todas as Fotos
+                        </button>
+                    </div>
+                    <div class="batch-grid">
+                        <div class="batch-group">
+                            <label>Tamanho Padrão</label>
+                            <select id="batchSize">
+                                <option value="10x15" selected>10x15 cm (Padrão) - R$ 2,50</option>
+                                <option value="13x18">13x18 cm (Porta-Retrato) - R$ 4,50</option>
+                                <option value="15x21">15x21 cm (A5) - R$ 7,90</option>
+                                <option value="20x30">20x30 cm (A4 / Pôster) - R$ 18,00</option>
+                                <option value="polaroid">Estilo Polaroid 8x10 cm - R$ 3,00</option>
+                                <option value="3x4">Cartela 3x4 (6 fotos) - R$ 15,00</option>
+                            </select>
+                        </div>
+                        <div class="batch-group">
+                            <label>Tipo de Papel</label>
+                            <select id="batchPaper">
+                                <option value="brilhante" selected>Brilhante (Glossy)</option>
+                                <option value="fosco">Fosco / Acetinado (Matte)</option>
+                            </select>
+                        </div>
+                        <div class="batch-group">
+                            <label>Borda Clássica</label>
+                            <select id="batchBorder">
+                                <option value="sem" selected>Sem borda (Sangria total)</option>
+                                <option value="com">Com borda branca clássica</option>
+                            </select>
+                        </div>
+                        <div class="batch-group">
+                            <label>Enquadramento</label>
+                            <select id="batchCrop">
+                                <option value="ajustar" selected>Ajustar sem cortar (Completa)</option>
+                                <option value="preencher">Preencher papel (Recorte)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Fotos Carregadas -->
+                <div id="photosContainer">
+                    <div class="empty-state premium-card" id="emptyState" style="margin-top: 24px; text-align: center; padding: 40px 20px;">
+                        <i data-lucide="images" style="width: 48px; height: 48px; color: var(--color-gold); margin-bottom: 12px;"></i>
+                        <h3 style="color: var(--color-primary);">Nenhuma foto adicionada ainda</h3>
+                        <p style="color: var(--text-muted); max-width: 420px; margin: 0 auto;">Adicione suas fotos acima para visualizar as miniaturas e escolher tamanhos e acabamentos.</p>
+                    </div>
+                    <div class="photos-grid" id="photosGrid"></div>
+                </div>
+            </div>
+
+            <!-- Coluna Lateral: Resumo do Pedido & Ações -->
+            <aside class="summary-sticky">
+                <div class="premium-card summary-card">
+                    <h3 style="color: var(--color-primary); margin-bottom: 14px; font-size: 19px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Resumo do Pedido</span>
+                        <span class="badge" id="badgeTotalFotos" style="font-size: 12px; background: var(--color-light-brown); color: var(--color-primary); padding: 2px 8px; border-radius: 999px;">0 fotos</span>
+                    </h3>
+
+                    <!-- Alerta de Desconto Progressivo -->
+                    <div class="discount-badge" id="discountAlert" style="display: none;">
+                        <i data-lucide="tag" style="width: 18px;"></i>
+                        <span id="discountText">Desconto aplicado!</span>
+                    </div>
+
+                    <div class="discount-progress">
+                        <span id="progressText">Envie 20 fotos ou mais para 10% de desconto!</span>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progressBar"></div>
+                        </div>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Total de fotos</span>
+                        <strong id="sumFotos">0</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Total de impressões</span>
+                        <strong id="sumImpressoes">0</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="sumSubtotal">R$ 0,00</span>
+                    </div>
+                    <div class="summary-row" id="rowDiscount" style="display: none; color: #2ec4b6;">
+                        <span>Desconto por volume</span>
+                        <strong id="sumDiscount">- R$ 0,00</strong>
+                    </div>
+                    <div class="summary-row total" style="margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--border-color);">
+                        <span>Total Geral</span>
+                        <strong id="sumTotal" style="color: var(--color-primary); font-size: 22px;">R$ 0,00</strong>
+                    </div>
+
+                    <p class="summary-note" style="margin: 14px 0;">
+                        <i data-lucide="truck" style="width: 14px; vertical-align: middle;"></i> Retirada no mesmo dia na loja ou entrega em todo o Brasil.
+                    </p>
+
+                    <button type="button" class="primary-btn" id="btnAddToCart" style="width: 100%; margin-bottom: 10px;" disabled>
+                        <i data-lucide="shopping-cart" style="width: 18px;"></i> Adicionar ao Carrinho do Site
+                    </button>
+                    
+                    <button type="button" class="outline-btn" id="btnWhatsAppOrder" style="width: 100%;" disabled>
+                        <i data-lucide="message-circle" style="width: 18px; color: #25d366;"></i> Enviar Pedido via WhatsApp
+                    </button>
+                </div>
+
+                <!-- Tabela de Preços de Referência -->
+                <div class="price-table-card">
+                    <h4><i data-lucide="info" style="width: 16px; color: var(--color-gold); vertical-align: middle;"></i> Tabela de Formatos</h4>
+                    <div class="price-item"><span>10x15 cm (Clássico Álbum)</span><strong>R$ 2,50</strong></div>
+                    <div class="price-item"><span>13x18 cm (Porta-Retrato)</span><strong>R$ 4,50</strong></div>
+                    <div class="price-item"><span>15x21 cm (Meia Folha A5)</span><strong>R$ 7,90</strong></div>
+                    <div class="price-item"><span>20x30 cm (Folha A4 / Quadro)</span><strong>R$ 18,00</strong></div>
+                    <div class="price-item"><span>Estilo Polaroid (8x10 cm)</span><strong>R$ 3,00</strong></div>
+                    <div class="price-item"><span>Cartela 3x4 (6 fotos)</span><strong>R$ 15,00</strong></div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Seção de Dúvidas Frequentes -->
+        <section class="faq-section">
+            <h2 style="color: var(--color-primary); text-align: center; font-size: 26px;">Dúvidas Frequentes sobre Impressão & Revelação</h2>
+            <div class="faq-grid">
+                <div class="faq-card">
+                    <h4><i data-lucide="sparkles" style="width: 18px; color: var(--color-gold);"></i> Qual papel escolher: Brilhante ou Fosco?</h4>
+                    <p>O <strong>Brilhante (Glossy)</strong> intensifica cores vivas, pretos profundos e dá mais destaque para fotos de viagens e festas. O <strong>Fosco (Matte)</strong> elimina reflexos de luz e marcas de dedos, sendo perfeito para porta-retratos sob luz direta e quadros com vidro.</p>
+                </div>
+                <div class="faq-card">
+                    <h4><i data-lucide="shield-check" style="width: 18px; color: var(--color-gold);"></i> As fotos do celular perdem qualidade?</h4>
+                    <p>Nosso laboratório conta com software de correção tonal e calibração de nitidez. Mesmo fotos tiradas por smartphones ou recebidas pelo WhatsApp saem nítidas nos tamanhos 10x15 e 13x18.</p>
+                </div>
+                <div class="faq-card">
+                    <h4><i data-lucide="clock" style="width: 18px; color: var(--color-gold);"></i> Qual o prazo de revelação?</h4>
+                    <p>Pedidos de revelação digital são produzidos em até 24 horas úteis. Você pode optar por retirar na loja física ou receber com entrega rápida em seu endereço.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="assets/js/catalogo.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        // Tabela de Preços Unitários
+        const TABELA_PRECOS = {
+            '10x15': { nome: '10x15 cm', preco: 2.50 },
+            '13x18': { nome: '13x18 cm', preco: 4.50 },
+            '15x21': { nome: '15x21 cm', preco: 7.90 },
+            '20x30': { nome: '20x30 cm', preco: 18.00 },
+            'polaroid': { nome: 'Estilo Polaroid (8x10 cm)', preco: 3.00 },
+            '3x4': { nome: 'Cartela 3x4 (6 fotos)', preco: 15.00 }
+        };
+
+        // Estado das Fotos Carregadas
+        let fotos = [];
+
+        // Elementos DOM
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const btnSelectFiles = document.getElementById('btnSelectFiles');
+        const batchPanel = document.getElementById('batchPanel');
+        const emptyState = document.getElementById('emptyState');
+        const photosGrid = document.getElementById('photosGrid');
+        const btnAddToCart = document.getElementById('btnAddToCart');
+        const btnWhatsAppOrder = document.getElementById('btnWhatsAppOrder');
+
+        // Eventos de Seleção e Drag & Drop
+        btnSelectFiles.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        ['dragenter', 'dragover'].forEach(name => {
+            dropzone.addEventListener(name, (e) => {
+                e.preventDefault(); e.stopPropagation();
+                dropzone.classList.add('dragover');
+            });
+        });
+        ['dragleave', 'drop'].forEach(name => {
+            dropzone.addEventListener(name, (e) => {
+                e.preventDefault(); e.stopPropagation();
+                dropzone.classList.remove('dragover');
+            });
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length) {
+                processarArquivos(dt.files);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length) {
+                processarArquivos(e.target.files);
+                fileInput.value = ''; // Reset input
+            }
+        });
+
+        // Processa os arquivos enviados
+        function processarArquivos(fileList) {
+            const defaultSize = document.getElementById('batchSize').value || '10x15';
+            const defaultPaper = document.getElementById('batchPaper').value || 'brilhante';
+            const defaultBorder = document.getElementById('batchBorder').value || 'sem';
+            const defaultCrop = document.getElementById('batchCrop').value || 'ajustar';
+
+            Array.from(fileList).forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+                const id = 'foto_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    fotos.push({
+                        id: id,
+                        nome: file.name,
+                        tamanhoArquivo: (file.size / 1024).toFixed(0) + ' KB',
+                        src: evt.target.result,
+                        tamanho: defaultSize,
+                        papel: defaultPaper,
+                        borda: defaultBorder,
+                        corte: defaultCrop,
+                        quantidade: 1
+                    });
+                    renderizar();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Aplicação em Lote
+        document.getElementById('btnApplyAll').addEventListener('click', () => {
+            if (!fotos.length) return;
+            const bSize = document.getElementById('batchSize').value;
+            const bPaper = document.getElementById('batchPaper').value;
+            const bBorder = document.getElementById('batchBorder').value;
+            const bCrop = document.getElementById('batchCrop').value;
+
+            fotos.forEach(f => {
+                f.tamanho = bSize;
+                f.papel = bPaper;
+                f.borda = bBorder;
+                f.corte = bCrop;
+            });
+            renderizar();
+            mostrarAviso('Configurações aplicadas a todas as ' + fotos.length + ' fotos!');
+        });
+
+        // Remove Foto
+        function removerFoto(id) {
+            fotos = fotos.filter(f => f.id !== id);
+            renderizar();
+        }
+
+        // Altera Quantidade
+        function alterarQtd(id, delta) {
+            const f = fotos.find(item => item.id === id);
+            if (!f) return;
+            f.quantidade = Math.max(1, f.quantidade + delta);
+            renderizar();
+        }
+
+        // Renderiza a Interface
+        function renderizar() {
+            if (fotos.length === 0) {
+                emptyState.style.display = 'block';
+                batchPanel.style.display = 'none';
+                photosGrid.innerHTML = '';
+                btnAddToCart.disabled = true;
+                btnWhatsAppOrder.disabled = true;
+            } else {
+                emptyState.style.display = 'none';
+                batchPanel.style.display = 'block';
+                btnAddToCart.disabled = false;
+                btnWhatsAppOrder.disabled = false;
+
+                photosGrid.innerHTML = fotos.map(f => {
+                    const precoUnit = TABELA_PRECOS[f.tamanho].preco;
+                    const precoFotoTotal = precoUnit * f.quantidade;
+                    const borderClass = f.borda === 'com' ? 'border-white' : '';
+                    const fitStyle = f.corte === 'ajustar' ? 'object-fit: contain; background: #1e151110;' : 'object-fit: cover;';
+
+                    return `
+                    <div class="photo-card" data-id="${f.id}">
+                        <div class="photo-card-actions">
+                            <button type="button" class="btn-mini-action" onclick="removerFoto('${f.id}')" title="Remover Foto">
+                                <i data-lucide="trash-2" style="width: 15px;"></i>
+                            </button>
+                        </div>
+
+                        <div class="photo-preview-wrap ${borderClass}">
+                            <img src="${f.src}" alt="${escapar(f.nome)}" style="${fitStyle}">
+                        </div>
+
+                        <div class="photo-info" title="${escapar(f.nome)}">
+                            <strong>${escapar(f.nome)}</strong> &bull; ${f.tamanhoArquivo}
+                        </div>
+
+                        <div class="photo-controls-row">
+                            <div>
+                                <label>Formato</label>
+                                <select onchange="atualizarOpcao('${f.id}', 'tamanho', this.value)">
+                                    <option value="10x15" ${f.tamanho === '10x15' ? 'selected' : ''}>10x15 cm (R$ 2,50)</option>
+                                    <option value="13x18" ${f.tamanho === '13x18' ? 'selected' : ''}>13x18 cm (R$ 4,50)</option>
+                                    <option value="15x21" ${f.tamanho === '15x21' ? 'selected' : ''}>15x21 cm (R$ 7,90)</option>
+                                    <option value="20x30" ${f.tamanho === '20x30' ? 'selected' : ''}>20x30 cm (R$ 18,00)</option>
+                                    <option value="polaroid" ${f.tamanho === 'polaroid' ? 'selected' : ''}>Polaroid 8x10 (R$ 3,00)</option>
+                                    <option value="3x4" ${f.tamanho === '3x4' ? 'selected' : ''}>Cartela 3x4 (R$ 15,00)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Papel</label>
+                                <select onchange="atualizarOpcao('${f.id}', 'papel', this.value)">
+                                    <option value="brilhante" ${f.papel === 'brilhante' ? 'selected' : ''}>Brilhante</option>
+                                    <option value="fosco" ${f.papel === 'fosco' ? 'selected' : ''}>Fosco / Matte</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="photo-controls-row">
+                            <div>
+                                <label>Borda Branca</label>
+                                <select onchange="atualizarOpcao('${f.id}', 'borda', this.value)">
+                                    <option value="sem" ${f.borda === 'sem' ? 'selected' : ''}>Sem borda</option>
+                                    <option value="com" ${f.borda === 'com' ? 'selected' : ''}>Com borda clássica</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Enquadramento</label>
+                                <select onchange="atualizarOpcao('${f.id}', 'corte', this.value)">
+                                    <option value="ajustar" ${f.corte === 'ajustar' ? 'selected' : ''}>Sem corte (Ajustar)</option>
+                                    <option value="preencher" ${f.corte === 'preencher' ? 'selected' : ''}>Preencher papel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="photo-line-total">
+                            <div class="qty-stepper" style="max-width: 110px;">
+                                <button type="button" onclick="alterarQtd('${f.id}', -1)">&minus;</button>
+                                <span>${f.quantidade}</span>
+                                <button type="button" onclick="alterarQtd('${f.id}', 1)">&plus;</button>
+                            </div>
+                            <div>
+                                <span>Total: </span><strong>${brl(precoFotoTotal)}</strong>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            atualizarTotais();
+            atualizarIcones();
+        }
+
+        // Atualiza Opção Específica de uma Foto
+        window.atualizarOpcao = function(id, campo, valor) {
+            const f = fotos.find(item => item.id === id);
+            if (!f) return;
+            f[campo] = valor;
+            renderizar();
+        };
+
+        // Cálculos e Resumo
+        function atualizarTotais() {
+            const totalFotos = fotos.length;
+            const totalImpressoes = fotos.reduce((s, f) => s + f.quantidade, 0);
+            const subtotal = fotos.reduce((s, f) => s + (TABELA_PRECOS[f.tamanho].preco * f.quantidade), 0);
+
+            // Desconto Progressivo:
+            // 20+ impressões = 10%
+            // 50+ impressões = 20%
+            let taxaDesconto = 0;
+            let msgProgresso = '';
+            let pctBarra = 0;
+
+            if (totalImpressoes >= 50) {
+                taxaDesconto = 0.20;
+                pctBarra = 100;
+                msgProgresso = '🎉 Incrível! Você garantiu 20% de desconto por volume!';
+            } else if (totalImpressoes >= 20) {
+                taxaDesconto = 0.10;
+                pctBarra = ((totalImpressoes - 20) / 30) * 50 + 50;
+                msgProgresso = `Faltam ${50 - totalImpressoes} fotos para atingir 20% de desconto!`;
+            } else {
+                pctBarra = (totalImpressoes / 20) * 100;
+                msgProgresso = totalImpressoes === 0 
+                    ? 'Envie 20 fotos ou mais para 10% de desconto!' 
+                    : `Adicione mais ${20 - totalImpressoes} foto(s) para ganhar 10% de desconto!`;
+            }
+
+            const valorDesconto = subtotal * taxaDesconto;
+            const totalFinal = subtotal - valorDesconto;
+
+            // Atualiza DOM
+            document.getElementById('badgeTotalFotos').textContent = `${totalFotos} foto${totalFotos !== 1 ? 's' : ''}`;
+            document.getElementById('sumFotos').textContent = totalFotos;
+            document.getElementById('sumImpressoes').textContent = totalImpressoes;
+            document.getElementById('sumSubtotal').textContent = brl(subtotal);
+            document.getElementById('sumTotal').textContent = brl(totalFinal);
+
+            document.getElementById('progressText').textContent = msgProgresso;
+            document.getElementById('progressBar').style.width = Math.min(100, Math.max(0, pctBarra)) + '%';
+
+            const alertBox = document.getElementById('discountAlert');
+            const rowDesc = document.getElementById('rowDiscount');
+
+            if (taxaDesconto > 0) {
+                alertBox.style.display = 'flex';
+                document.getElementById('discountText').textContent = `${(taxaDesconto * 100).toFixed(0)}% de Desconto por Volume Aplicado!`;
+                rowDesc.style.display = 'flex';
+                document.getElementById('sumDiscount').textContent = `- ${brl(valorDesconto)}`;
+            } else {
+                alertBox.style.display = 'none';
+                rowDesc.style.display = 'none';
+            }
+        }
+
+        // Adicionar ao Carrinho do Site
+        btnAddToCart.addEventListener('click', () => {
+            if (!fotos.length) return;
+            const totalImpressoes = fotos.reduce((s, f) => s + f.quantidade, 0);
+            const subtotal = fotos.reduce((s, f) => s + (TABELA_PRECOS[f.tamanho].preco * f.quantidade), 0);
+            let taxaDesconto = totalImpressoes >= 50 ? 0.20 : (totalImpressoes >= 20 ? 0.10 : 0);
+            const valorFinal = subtotal * (1 - taxaDesconto);
+
+            // Resumo descritivo
+            const formatosUsados = [...new Set(fotos.map(f => TABELA_PRECOS[f.tamanho].nome))].join(', ');
+            const pedidoId = 'impressao_' + Date.now();
+
+            const itemCarrinho = {
+                id: pedidoId,
+                nome: `Pacote de Revelação (${totalImpressoes} fotos)`,
+                desc: `Formatos: ${formatosUsados} • Papel de alta definição.`,
+                preco: valorFinal,
+                qtd: 1,
+                thumb: fotos[0].src,
+                detalhes: {
+                    totalFotos: fotos.length,
+                    totalImpressoes: totalImpressoes,
+                    taxaDesconto: taxaDesconto
+                }
+            };
+
+            adicionarCustomAoCarrinho(pedidoId, itemCarrinho);
+            setTimeout(() => {
+                window.location.href = 'carrinho.html';
+            }, 600);
+        });
+
+        // Enviar via WhatsApp
+        btnWhatsAppOrder.addEventListener('click', () => {
+            if (!fotos.length) return;
+            const totalImpressoes = fotos.reduce((s, f) => s + f.quantidade, 0);
+            const subtotal = fotos.reduce((s, f) => s + (TABELA_PRECOS[f.tamanho].preco * f.quantidade), 0);
+            let taxaDesconto = totalImpressoes >= 50 ? 0.20 : (totalImpressoes >= 20 ? 0.10 : 0);
+            const valorFinal = subtotal * (1 - taxaDesconto);
+
+            let detalhesTexto = fotos.map((f, i) => 
+                `Foto ${i+1}: ${f.quantidade}x ${TABELA_PRECOS[f.tamanho].nome} (${f.papel === 'brilhante' ? 'Papel Brilhante' : 'Papel Fosco'}, ${f.borda === 'com' ? 'c/ borda branca' : 'sem borda'})`
+            ).join('\n');
+
+            const mensagem = 
+`*Olá, Foto Ferrara! Gostaria de solicitar um pedido de Revelação/Impressão de Fotos:*
+
+📸 *Total de Fotos Enviadas:* ${fotos.length}
+🖼️ *Total de Impressões:* ${totalImpressoes}
+💰 *Valor Estimado:* ${brl(valorFinal)} ${taxaDesconto > 0 ? `(com ${(taxaDesconto * 100).toFixed(0)}% OFF)` : ''}
+
+*Detalhamento das fotos:*
+${detalhesTexto}
+
+Vou enviar os arquivos originais em alta resolução aqui pelo WhatsApp. Como posso prosseguir com o pagamento e entrega?`;
+
+            const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        });
+    </script>
+</body>
+</html>
